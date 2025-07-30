@@ -148,7 +148,7 @@ function submitData() {
   data.append("longitude", currentLongitude);
   data.append("foto", uploadedFileLinks.join(", "));
 
-  fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec?" + data.toString())
+  fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec" + data.toString())
     .then(res => res.text())
     .then(msg => alert("✅ " + msg))
     .catch(err => alert("❌ Gagal simpan data: " + err));
