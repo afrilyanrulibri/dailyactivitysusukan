@@ -1,93 +1,71 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8" />
+  <title>Absensi Lokasi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Form Absensi Lokasi</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    input, button, label {
-      display: block;
-      margin: 12px 0;
-      padding: 10px;
-      width: 100%;
-      max-width: 400px;
-    }
-    button {
-      background: #1976d2;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #status { margin-top: 20px; font-weight: bold; }
+    input, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
   </style>
 </head>
 <body>
-  <h2>Form Absensi Harian</h2>
+  <h2>Form Absensi</h2>
   <form id="absenForm">
-    <label>Activity:</label>
-    <input type="text" id="activity" required />
-
-    <label>Nama Mantri:</label>
-    <input type="text" id="namaMantri" required />
-
-    <label>Nama Nasabah:</label>
-    <input type="text" id="namaNasabah" required />
-
-    <label>Upload Foto (Google Drive, dll):</label>
-    <input type="url" id="uploadFoto" placeholder="https://..." />
-
-    <input type="hidden" id="latitude" />
-    <input type="hidden" id="longitude" />
-
+    <input type="text" name="activity" placeholder="Activity" required />
+    <input type="text" name="namaMantri" placeholder="Nama Mantri" required />
+    <input type="text" name="namaNasabah" placeholder="Nama Nasabah" required />
+    <input type="file" name="uploadFoto" accept="image/*" required />
+    <input type="hidden" name="latitude" />
+    <input type="hidden" name="longitude" />
     <button type="submit">Kirim</button>
   </form>
-
   <p id="status"></p>
 
   <script>
     const form = document.getElementById("absenForm");
     const status = document.getElementById("status");
 
-    // Ambil lokasi GPS
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        document.getElementById("latitude").value = pos.coords.latitude;
-        document.getElementById("longitude").value = pos.coords.longitude;
-      },
-      (err) => {
-        console.error("Lokasi error:", err);
-        status.innerText = "❌ Tidak bisa ambil lokasi. Aktifkan GPS.";
-      }
-    );
+    // Ambil lokasi
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      form.latitude.value = pos.coords.latitude;
+      form.longitude.value = pos.coords.longitude;
+    }, function () {
+      status.innerText = "Aktifkan lokasi/GPS!";
+    });
 
-    form.addEventListener("submit", function (e) {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      status.innerText = "⏳ Mengirim...";
+      status.innerText = "Mengirim...";
 
-      const data = {
-        activity: document.getElementById("activity").value,
-        namaMantri: document.getElementById("namaMantri").value,
-        namaNasabah: document.getElementById("namaNasabah").value,
-        uploadFoto: document.getElementById("uploadFoto").value,
-        latitude: document.getElementById("latitude").value,
-        longitude: document.getElementById("longitude").value,
+      const fileInput = form.uploadFoto.files[0];
+      const reader = new FileReader();
+      reader.onload = function () {
+        const base64Data = reader.result.split(',')[1];
+
+        const data = new URLSearchParams();
+        data.append("activity", form.activity.value);
+        data.append("namaMantri", form.namaMantri.value);
+        data.append("namaNasabah", form.namaNasabah.value);
+        data.append("latitude", form.latitude.value);
+        data.append("longitude", form.longitude.value);
+        data.append("file", base64Data);
+        data.append("namaFile", fileInput.name);
+
+        fetch("PASTE_WEB_APP_URL", {
+          method: "POST",
+          body: data
+        })
+          .then(res => res.text())
+          .then(text => {
+            status.innerText = text;
+            form.reset();
+          })
+          .catch(err => {
+            console.error(err);
+            status.innerText = "Gagal kirim!";
+          });
       };
-
-      fetch("https://script.google.com/macros/s/AKfycbwVeTByI6elQy-B569jCXCG14AlicEX87pewKXWw_rr/dev", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-      .then((res) => res.text())
-      .then((text) => {
-        status.innerText = "✅ Data berhasil dikirim!";
-        form.reset();
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        status.innerText = "❌ Gagal mengirim.";
-      });
+      reader.readAsDataURL(fileInput);
     });
   </script>
 </body>
