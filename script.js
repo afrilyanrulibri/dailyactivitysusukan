@@ -1,59 +1,52 @@
-// Variabel global untuk menyimpan lokasi dan link hasil upload
-let currentLatitude = null;
-let currentLongitude = null;
-let uploadedFileLink = "";
-
-// Fungsi ambil lokasi GPS
-function shareLocation() {
-  const lokasiText = document.getElementById("lokasi");
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        currentLatitude = position.coords.latitude;
-        currentLongitude = position.coords.longitude;
-        lokasiText.textContent = `Lokasi: Latitude ${currentLatitude}, Longitude ${currentLongitude}`;
-      },
-      (error) => {
-        lokasiText.textContent = "❌ Gagal mengambil lokasi.";
-      }
-    );
-  } else {
-    lokasiText.textContent = "❌ Geolocation tidak didukung di perangkat ini.";
-  }
-}
-
-// Fungsi upload foto ke Google Drive via Web App
 async function uploadFoto() {
   const fileInput = document.getElementById("uploadFoto");
-  const file = fileInput.files[0];
+  const files = fileInput.files;
+  const progressBar = document.getElementById("uploadProgress");
 
-  if (!file) {
-    alert("📷 Silakan pilih file foto terlebih dahulu!");
+  if (!files.length) {
+    alert("📷 Silakan pilih minimal satu file foto terlebih dahulu!");
     return;
   }
 
-  const reader = new FileReader();
-  reader.onloadend = async () => {
-    const base64 = reader.result.split(",")[1];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
 
-    const data = new URLSearchParams();
-    data.append("file", base64);
-    data.append("filename", file.name);
-    data.append("mimeType", file.type);
+    progressBar.style.display = "block";
+    progressBar.value = 0;
 
-    try {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec", {
-        method: "POST",
-        body: data,
-      });
+    reader.onloadend = async () => {
+      const base64 = reader.result.split(",")[1];
 
-      const result = await response.text();
-      uploadedFileLink = result;
-      alert("✅ Upload berhasil!\nLink: " + result);
-    } catch (err) {
-      alert("❌ Gagal upload: " + err.message);
-    }
-  };
+      const data = new URLSearchParams();
+      data.append("file", base64);
+      data.append("filename", file.name);
+      data.append("mimeType", file.type);
 
-  reader.readAsDataURL(file);
+      try {
+        const response = await fetch(
+          "https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec",
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+
+        const result = await response.text();
+        uploadedFileLink += result + "\n";
+        alert(`✅ Upload berhasil:\n${file.name}\nLink: ${result}`);
+      } catch (err) {
+        alert(`❌ Upload gagal:\n${file.name}\n${err.message}`);
+      } finally {
+        progressBar.value = ((i + 1) / files.length) * 100;
+        if (i === files.length - 1) {
+          setTimeout(() => {
+            progressBar.style.display = "none";
+          }, 1000);
+        }
+      }
+    };
+
+    reader.readAsDataURL(file);
+  }
 }
