@@ -1,84 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Form Absensi Mantri</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    input, select, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Activity</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Form Absensi Harian</h2>
-  <form id="absenForm">
-    <label>Activity:</label>
-    <input type="text" name="activity" required />
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/id/thumb/9/9f/Logo_BRI.svg/2560px-Logo_BRI.svg.png" alt="Logo BRI" class="logo">
+    <h1>Daily Activity</h1>
+  </header>
 
-    <label>Nama Mantri:</label>
-    <input type="text" name="namaMantri" required />
+  <main>
+    <label for="activity">ACTIVITY</label>
+    <select id="activity">
+      <option>OTS Pinjaman</option>
+      <option>PUS</option>
+      <option>QRIS</option>
+    </select>
 
-    <label>Nama Nasabah:</label>
-    <input type="text" name="namaNasabah" required />
+    <label for="pekerja">NAMA PEKERJA</label>
+    <select id="pekerja">
+      <option>00156802 - EKOWATI CAHYANINGROM</option>
+      <option>00189290 - MEGA BAGUS KURNIAWAN ABADI</option>
+      <option>00189417 - DEDDY NOVIYANTO B.S</option>
+      <option>00213122 - RISKA AGUSTIANA</option>
+      <option>00270609 - SULISTIYO RINI</option>
+      <option>00288133 - GALIH RIO PAMBUDI</option>
+    </select>
 
-    <label>Upload Foto:</label>
-    <input type="file" name="uploadFoto" accept="image/*" required />
+    <label for="nasabah">NAMA NASABAH / MERCHANT</label>
+    <input type="text" id="nasabah" placeholder="Tulis nama nasabah...">
 
-    <input type="hidden" name="latitude" />
-    <input type="hidden" name="longitude" />
+    <label for="uploadFoto">UPLOAD FOTO</label>
+    <input type="file" id="uploadFoto" accept="image/*">
+    <button onclick="uploadFoto()">Upload Foto</button>
 
-    <button type="submit">Kirim</button>
-  </form>
+    <br><br>
+    <button onclick="shareLocation()">SHARE LOCATION</button>
+    <p id="lokasi"></p>
+  </main>
 
-  <p id="status"></p>
-
-  <script>
-    const form = document.getElementById("absenForm");
-    const status = document.getElementById("status");
-
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      form.latitude.value = pos.coords.latitude;
-      form.longitude.value = pos.coords.longitude;
-    }, function () {
-      status.innerText = "Gagal mengambil lokasi. Aktifkan GPS.";
-    });
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      status.innerText = "Mengirim...";
-
-      const file = form.uploadFoto.files[0];
-      const reader = new FileReader();
-
-      reader.onload = function () {
-        const data = {
-          activity: form.activity.value,
-          namaMantri: form.namaMantri.value,
-          namaNasabah: form.namaNasabah.value,
-          latitude: form.latitude.value,
-          longitude: form.longitude.value,
-          filename: file.name,
-          mimetype: file.type,
-          filedata: reader.result.split(",")[1] // base64 tanpa prefix
-        };
-
-        fetch("https://script.google.com/macros/s/AKfycbwVeTByI6elQy-B569jCXCG14AlicEX87pewKXWw_rr/dev", {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        })
-        .then(res => res.text())
-        .then(txt => {
-          status.innerText = "Berhasil disimpan!";
-          form.reset();
-        })
-        .catch(err => {
-          console.error(err);
-          status.innerText = "Gagal kirim!";
-        });
-      };
-
-      reader.readAsDataURL(file);
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
