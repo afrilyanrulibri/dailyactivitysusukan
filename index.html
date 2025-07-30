@@ -11,9 +11,18 @@
       margin-top: 10px;
       color: #007bff;
     }
+
     .upload-result {
       margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .upload-success {
       color: green;
+    }
+
+    .upload-fail {
+      color: red;
     }
   </style>
 </head>
@@ -48,6 +57,7 @@
     <label for="uploadFoto">FOTO</label>
     <input type="file" id="uploadFoto" accept="image/*" multiple capture="environment">
     <button onclick="uploadFoto()">UPLOAD</button>
+    
     <div class="progress" id="progressText">Mengunggah...</div>
     <div class="upload-result" id="uploadResult"></div>
 
