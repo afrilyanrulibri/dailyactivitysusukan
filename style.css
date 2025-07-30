@@ -1,0 +1,50 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e6ecf5;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #0a3d91; /* Biru BRI */
+  color: white;
+  padding: 15px;
+  text-align: center;
+  position: relative;
+}
+
+.logo {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  height: 40px;
+}
+
+main {
+  padding: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #0a3d91;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #062c6b;
+}
