@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lokasi Anda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <h2>Lokasi Anda Saat Ini</h2>
+  <p id="lokasi">Mengambil lokasi...</p>
+  <div id="mapLink"></div>
+
+  <script>
+    navigator.geolocation.getCurrentPosition(function (position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      document.getElementById("lokasi").innerText = `Latitude: ${lat}, Longitude: ${lon}`;
+      document.getElementById("mapLink").innerHTML = `<a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank">Lihat di Google Maps</a>`;
+    }, function () {
+      document.getElementById("lokasi").innerText = "Tidak dapat mengambil lokasi.";
+    });
+  </script>
+</body>
+</html>
