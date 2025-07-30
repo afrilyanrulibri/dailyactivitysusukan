@@ -10,7 +10,7 @@ function shareLocation() {
         currentLongitude = position.coords.longitude;
         lokasiText.textContent = `Lokasi: Latitude ${currentLatitude}, Longitude ${currentLongitude}`;
       },
-      (error) => {
+      () => {
         lokasiText.textContent = "❌ Gagal mengambil lokasi.";
       }
     );
@@ -37,7 +37,7 @@ async function compressImage(file, maxWidth = 1024) {
             resolve(blob);
           },
           file.type,
-          0.7 // kualitas kompres (70%)
+          0.7
         );
       };
       img.src = e.target.result;
@@ -80,9 +80,13 @@ async function uploadFoto() {
         });
 
         const result = await response.text();
-        uploadResult.innerHTML += `✅ <a href="${result}" target="_blank">${file.name}</a><br>`;
+        if (result.toLowerCase().includes("https://") || result.toLowerCase().includes("drive")) {
+          uploadResult.innerHTML += `✅ FILE SUKSES UPLOAD<br>`;
+        } else {
+          uploadResult.innerHTML += `❌ FILE GAGAL UPLOAD<br>`;
+        }
       } catch (err) {
-        uploadResult.innerHTML += `❌ ${file.name}: ${err.message}<br>`;
+        uploadResult.innerHTML += `❌ FILE GAGAL UPLOAD<br>`;
       }
 
       if (i === files.length - 1) {
