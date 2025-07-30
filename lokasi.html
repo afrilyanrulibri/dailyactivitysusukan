@@ -56,10 +56,14 @@
           longitude: form.longitude.value
         };
 
-        fetch("https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec", {
-          method: "POST",
-          body: JSON.stringify(data)
-        })
+      fetch("https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+
         .then(res => res.text())
         .then(text => {
           status.innerText = "Berhasil disimpan!";
