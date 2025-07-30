@@ -23,7 +23,7 @@ function shareLocation() {
 async function compressImage(file, maxWidth = 1024) {
   return new Promise((resolve) => {
     const img = new Image();
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -31,13 +31,9 @@ async function compressImage(file, maxWidth = 1024) {
         const scale = Math.min(maxWidth / img.width, 1);
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(
-          (blob) => resolve(blob),
-          file.type,
-          0.7
-        );
+        canvas.toBlob((blob) => resolve(blob), file.type, 0.7);
       };
       img.src = e.target.result;
     };
@@ -88,68 +84,13 @@ async function uploadFoto() {
       try {
         const response = await fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec", {
           method: "POST",
-          body: data,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: data.toString(),
         });
 
         if (response.ok) {
+          const url = await response.text();
           progressBar.style.width = "100%";
-          progressBar.style.background = "#198754";
-          resultText.textContent = "✅ FILE SUKSES UPLOAD";
-          resultText.style.color = "green";
-          uploadedFileLinks.push("uploaded");
-        } else {
-          progressBar.style.width = "100%";
-          progressBar.style.background = "#dc3545";
-          resultText.textContent = "❌ FILE GAGAL UPLOAD";
-          resultText.style.color = "red";
-        }
-      } catch (err) {
-        progressBar.style.width = "100%";
-        progressBar.style.background = "#dc3545";
-        resultText.textContent = "❌ FILE GAGAL UPLOAD";
-        resultText.style.color = "red";
-      }
-
-      uploadResult.appendChild(resultText);
-
-      if (i === files.length - 1) {
-        progressText.innerHTML = "Selesai upload.";
-      }
-    };
-
-    reader.readAsDataURL(compressedBlob);
-  }
-}
-
-function submitData() {
-  const activity = document.getElementById("activity").value;
-  const pekerja = document.getElementById("pekerja").value;
-  const nasabah = document.getElementById("nasabah").value;
-
-  const errorActivity = document.getElementById("errorActivity");
-  const errorPekerja = document.getElementById("errorPekerja");
-  const errorNasabah = document.getElementById("errorNasabah");
-
-  let valid = true;
-  errorActivity.textContent = activity ? "" : "Activity wajib dipilih.";
-  errorPekerja.textContent = pekerja ? "" : "Nama pekerja wajib dipilih.";
-  errorNasabah.textContent = nasabah ? "" : "Nama nasabah wajib diisi.";
-
-  if (!activity || !pekerja || !nasabah || !currentLatitude || !currentLongitude || uploadedFileLinks.length === 0) {
-    alert("❗ Semua data wajib diisi, termasuk foto dan lokasi.");
-    return;
-  }
-
-  const data = new URLSearchParams();
-  data.append("activity", activity);
-  data.append("pekerja", pekerja);
-  data.append("nasabah", nasabah);
-  data.append("latitude", currentLatitude);
-  data.append("longitude", currentLongitude);
-  data.append("foto", uploadedFileLinks.join(", "));
-
-  fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec" + data.toString())
-    .then(res => res.text())
-    .then(msg => alert("✅ " + msg))
-    .catch(err => alert("❌ Gagal simpan data: " + err));
-}
+          progressBar.style.background = "#1987
