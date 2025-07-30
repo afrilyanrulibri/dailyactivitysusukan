@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Absensi Lokasi Mantri</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      input, select, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    </style>
+  </head>
+  <body>
+    <h2>Form Absensi Harian</h2>
+    <form id="absenForm">
+      <label>Activity:</label>
+      <input type="text" name="activity" required />
+
+      <label>Nama Mantri:</label>
+      <input type="text" name="namaMantri" required />
+
+      <label>Nama Nasabah:</label>
+      <input type="text" name="namaNasabah" required />
+
+      <label>Upload Foto (link Google Drive, dll):</label>
+      <input type="url" name="uploadFoto" placeholder="https://..." />
+
+      <input type="hidden" name="latitude" />
+      <input type="hidden" name="longitude" />
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script>
+      const form = document.getElementById("absenForm");
+      const status = document.getElementById("status");
+
+      // Ambil lokasi
+      navigator.geolocation.getCurrentPosition(function (position) {
+        form.latitude.value = position.coords.latitude;
+        form.longitude.value = position.coords.longitude;
+      }, function () {
+        status.innerText = "Tidak dapat mengambil lokasi. Aktifkan GPS.";
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        status.innerText = "Mengirim...";
+
+        const data = {
+          activity: form.activity.value,
+          namaMantri: form.namaMantri.value,
+          namaNasabah: form.namaNasabah.value,
+          uploadFoto: form.uploadFoto.value,
+          latitude: form.latitude.value,
+          longitude: form.longitude.value
+        };
+
+        fetch("https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec", {
+          method: "POST",
+          body: JSON.stringify(data)
+        })
+        .then(res => res.text())
+        .then(text => {
+          status.innerText = "Berhasil disimpan!";
+          form.reset();
+        })
+        .catch(err => {
+          console.error(err);
+          status.innerText = "Gagal mengirim!";
+        });
+      });
+    </script>
+  </body>
+</html>
