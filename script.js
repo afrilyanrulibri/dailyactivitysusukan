@@ -98,7 +98,7 @@ async function uploadFoto() {
       data.append("longitude", currentLongitude);
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwVeTByI6elQy-B569jCXCG14AlicEX87pewKXWw_rr/dev", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec", {
           method: "POST",
           body: data,
         });
