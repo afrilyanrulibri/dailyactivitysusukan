@@ -33,9 +33,7 @@ async function compressImage(file, maxWidth = 1024) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         canvas.toBlob(
-          (blob) => {
-            resolve(blob);
-          },
+          (blob) => resolve(blob),
           file.type,
           0.7
         );
@@ -57,20 +55,24 @@ async function uploadFoto() {
     return;
   }
 
-  uploadResult.innerHTML = "⏳ Loading...";
+  progressText.innerHTML = "Loading...";
   progressText.style.display = "block";
-  progressText.innerHTML = ""; // Kosongkan progress sebelumnya
+  uploadResult.innerHTML = "";
 
   for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const compressedBlob = await compressImage(file);
+
     const progressBar = document.createElement("div");
     progressBar.style.width = "0%";
     progressBar.style.height = "10px";
     progressBar.style.background = "#0d6efd";
     progressBar.style.margin = "5px 0";
-    progressText.appendChild(progressBar);
+    uploadResult.appendChild(progressBar);
 
-    const file = files[i];
-    const compressedBlob = await compressImage(file);
+    const resultText = document.createElement("div");
+    resultText.style.marginBottom = "10px";
+    resultText.style.fontWeight = "bold";
 
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -90,17 +92,25 @@ async function uploadFoto() {
         if (response.ok) {
           progressBar.style.width = "100%";
           progressBar.style.background = "#198754"; // Hijau
+          resultText.textContent = "✅ FILE SUKSES UPLOAD";
+          resultText.style.color = "green";
         } else {
           progressBar.style.width = "100%";
           progressBar.style.background = "#dc3545"; // Merah
+          resultText.textContent = "❌ FILE GAGAL UPLOAD";
+          resultText.style.color = "red";
         }
       } catch (err) {
         progressBar.style.width = "100%";
         progressBar.style.background = "#dc3545"; // Merah
+        resultText.textContent = "❌ FILE GAGAL UPLOAD";
+        resultText.style.color = "red";
       }
 
+      uploadResult.appendChild(resultText);
+
       if (i === files.length - 1) {
-        uploadResult.innerHTML = "✅ Selesai upload.";
+        progressText.innerHTML = "Selesai upload.";
       }
     };
 
