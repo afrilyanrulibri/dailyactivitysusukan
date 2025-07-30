@@ -24,6 +24,13 @@
     .upload-fail {
       color: red;
     }
+
+    .error {
+      color: red;
+      font-size: 0.9em;
+      margin-top: -5px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -35,14 +42,17 @@
   <main>
     <label for="activity">ACTIVITY</label>
     <select id="activity">
+      <option value="" selected disabled hidden>Pilih aktivitas</option>
       <option>OTS Pinjaman</option>
       <option>PUS</option>
       <option>QRIS</option>
       <option>SIMPANAN</option>
     </select>
+    <div class="error" id="errorActivity"></div>
 
     <label for="pekerja">NAMA PEKERJA</label>
     <select id="pekerja">
+      <option value="" selected disabled hidden>Pilih nama pekerja</option>
       <option>00156802 - EKOWATI CAHYANINGROM</option>
       <option>00189290 - MEGA BAGUS KURNIAWAN ABADI</option>
       <option>00189417 - DEDDY NOVIYANTO B.S</option>
@@ -50,14 +60,16 @@
       <option>00270609 - SULISTIYO RINI</option>
       <option>00288133 - GALIH RIO PAMBUDI</option>
     </select>
+    <div class="error" id="errorPekerja"></div>
 
     <label for="nasabah">NAMA NASABAH / MERCHANT</label>
     <input type="text" id="nasabah" placeholder="Tulis nama nasabah...">
+    <div class="error" id="errorNasabah"></div>
 
     <label for="uploadFoto">FOTO</label>
     <input type="file" id="uploadFoto" accept="image/*" multiple capture="environment">
     <button onclick="uploadFoto()">UPLOAD</button>
-    
+
     <div class="progress" id="progressText">Mengunggah...</div>
     <div class="upload-result" id="uploadResult"></div>
 
@@ -66,6 +78,59 @@
     <p id="lokasi"></p>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    function uploadFoto() {
+      const activity = document.getElementById('activity');
+      const pekerja = document.getElementById('pekerja');
+      const nasabah = document.getElementById('nasabah');
+      const foto = document.getElementById('uploadFoto');
+
+      let isValid = true;
+
+      document.getElementById('errorActivity').textContent = '';
+      document.getElementById('errorPekerja').textContent = '';
+      document.getElementById('errorNasabah').textContent = '';
+
+      if (!activity.value) {
+        document.getElementById('errorActivity').textContent = 'Silakan pilih aktivitas';
+        isValid = false;
+      }
+      if (!pekerja.value) {
+        document.getElementById('errorPekerja').textContent = 'Silakan pilih nama pekerja';
+        isValid = false;
+      }
+      if (!nasabah.value.trim()) {
+        document.getElementById('errorNasabah').textContent = 'Silakan isi nama nasabah/merchant';
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      document.getElementById('progressText').style.display = 'block';
+
+      // Tambahkan logika unggah sesuai kebutuhan
+      setTimeout(() => {
+        document.getElementById('progressText').style.display = 'none';
+        document.getElementById('uploadResult').textContent = 'Unggah berhasil!';
+        document.getElementById('uploadResult').className = 'upload-result upload-success';
+      }, 1500);
+    }
+
+    function shareLocation() {
+      const lokasi = document.getElementById('lokasi');
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            lokasi.textContent = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+          },
+          () => {
+            lokasi.textContent = 'Gagal mendapatkan lokasi';
+          }
+        );
+      } else {
+        lokasi.textContent = 'Geolocation tidak didukung browser ini';
+      }
+    }
+  </script>
 </body>
 </html>
