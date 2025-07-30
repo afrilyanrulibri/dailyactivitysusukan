@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Absensi Lokasi Mantri</title>
+  <title>Form Absensi Mantri</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    input, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    input, select, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
   </style>
 </head>
 <body>
@@ -35,35 +35,49 @@
     const form = document.getElementById("absenForm");
     const status = document.getElementById("status");
 
-    // Ambil lokasi
-    navigator.geolocation.getCurrentPosition(function (position) {
-      form.latitude.value = position.coords.latitude;
-      form.longitude.value = position.coords.longitude;
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      form.latitude.value = pos.coords.latitude;
+      form.longitude.value = pos.coords.longitude;
     }, function () {
-      status.innerText = "Tidak dapat mengambil lokasi. Aktifkan GPS.";
+      status.innerText = "Gagal mengambil lokasi. Aktifkan GPS.";
     });
 
-    form.addEventListener("submit", async function (e) {
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
       status.innerText = "Mengirim...";
 
-      const formData = new FormData(form);
-      formData.append("latitude", form.latitude.value);
-      formData.append("longitude", form.longitude.value);
+      const file = form.uploadFoto.files[0];
+      const reader = new FileReader();
 
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec", {
+      reader.onload = function () {
+        const data = {
+          activity: form.activity.value,
+          namaMantri: form.namaMantri.value,
+          namaNasabah: form.namaNasabah.value,
+          latitude: form.latitude.value,
+          longitude: form.longitude.value,
+          filename: file.name,
+          mimetype: file.type,
+          filedata: reader.result.split(",")[1] // base64 tanpa prefix
+        };
+
+        fetch("https://script.google.com/macros/s/AKfycbwVeTByI6elQy-B569jCXCG14AlicEX87pewKXWw_rr/dev", {
           method: "POST",
-          body: formData
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        })
+        .then(res => res.text())
+        .then(txt => {
+          status.innerText = "Berhasil disimpan!";
+          form.reset();
+        })
+        .catch(err => {
+          console.error(err);
+          status.innerText = "Gagal kirim!";
         });
+      };
 
-        const text = await response.text();
-        status.innerText = text === "OK" ? "Berhasil disimpan!" : text;
-        form.reset();
-      } catch (error) {
-        console.error(error);
-        status.innerText = "Gagal mengirim!";
-      }
+      reader.readAsDataURL(file);
     });
   </script>
 </body>
