@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Absensi Lokasi Mantri</title>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Form Absensi Lokasi</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    input, select, button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    input, button, label {
+      display: block;
+      margin: 12px 0;
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    button {
+      background: #1976d2;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #status { margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -20,13 +34,13 @@
     <label>Nama Nasabah:</label>
     <input type="text" id="namaNasabah" required />
 
-    <label>Upload Foto (link Google Drive, dll):</label>
+    <label>Upload Foto (Google Drive, dll):</label>
     <input type="url" id="uploadFoto" placeholder="https://..." />
 
     <input type="hidden" id="latitude" />
     <input type="hidden" id="longitude" />
 
-    <button type="submit">Submit</button>
+    <button type="submit">Kirim</button>
   </form>
 
   <p id="status"></p>
@@ -35,21 +49,21 @@
     const form = document.getElementById("absenForm");
     const status = document.getElementById("status");
 
-    // Ambil lokasi GPS saat halaman dimuat
+    // Ambil lokasi GPS
     navigator.geolocation.getCurrentPosition(
-      function (position) {
-        document.getElementById("latitude").value = position.coords.latitude;
-        document.getElementById("longitude").value = position.coords.longitude;
+      (pos) => {
+        document.getElementById("latitude").value = pos.coords.latitude;
+        document.getElementById("longitude").value = pos.coords.longitude;
       },
-      function (error) {
-        status.innerText = "❌ Tidak dapat mengambil lokasi. Aktifkan GPS.";
-        console.error("Geolocation error:", error);
+      (err) => {
+        console.error("Lokasi error:", err);
+        status.innerText = "❌ Tidak bisa ambil lokasi. Aktifkan GPS.";
       }
     );
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      status.innerText = "⏳ Mengirim data...";
+      status.innerText = "⏳ Mengirim...";
 
       const data = {
         activity: document.getElementById("activity").value,
@@ -57,24 +71,22 @@
         namaNasabah: document.getElementById("namaNasabah").value,
         uploadFoto: document.getElementById("uploadFoto").value,
         latitude: document.getElementById("latitude").value,
-        longitude: document.getElementById("longitude").value
+        longitude: document.getElementById("longitude").value,
       };
 
       fetch("https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       })
-      .then(res => res.text())
-      .then(text => {
-        status.innerText = "✅ Berhasil disimpan!";
+      .then((res) => res.text())
+      .then((text) => {
+        status.innerText = "✅ Data berhasil dikirim!";
         form.reset();
       })
-      .catch(err => {
-        console.error("Fetch error:", err);
-        status.innerText = "❌ Gagal mengirim!";
+      .catch((err) => {
+        console.error("Error:", err);
+        status.innerText = "❌ Gagal mengirim.";
       });
     });
   </script>
