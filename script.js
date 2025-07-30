@@ -47,6 +47,10 @@ async function compressImage(file, maxWidth = 1024) {
 async function uploadFoto() {
   const fileInput = document.getElementById("uploadFoto");
   const files = fileInput.files;
+  const activity = document.getElementById("activity").value;
+  const pekerja = document.getElementById("pekerja").value;
+  const nasabah = document.getElementById("nasabah").value;
+
   const progressText = document.getElementById("progressText");
   const uploadResult = document.getElementById("uploadResult");
 
@@ -55,7 +59,12 @@ async function uploadFoto() {
     return;
   }
 
-  progressText.innerHTML = "Loading...";
+  if (!currentLatitude || !currentLongitude) {
+    alert("📍 Lokasi belum dibagikan. Silakan klik 'SHARE LOCATION' terlebih dahulu.");
+    return;
+  }
+
+  progressText.innerHTML = "Mengunggah...";
   progressText.style.display = "block";
   uploadResult.innerHTML = "";
 
@@ -82,9 +91,14 @@ async function uploadFoto() {
       data.append("file", base64);
       data.append("filename", file.name);
       data.append("mimeType", file.type);
+      data.append("activity", activity);
+      data.append("pekerja", pekerja);
+      data.append("nasabah", nasabah);
+      data.append("latitude", currentLatitude);
+      data.append("longitude", currentLongitude);
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwVeTByI6elQy-B569jCXCG14AlicEX87pewKXWw_rr/dev", {
           method: "POST",
           body: data,
         });
@@ -110,7 +124,7 @@ async function uploadFoto() {
       uploadResult.appendChild(resultText);
 
       if (i === files.length - 1) {
-        progressText.innerHTML = "Selesai upload.";
+        progressText.innerHTML = "✅ Selesai upload.";
       }
     };
 
