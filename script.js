@@ -57,10 +57,18 @@ async function uploadFoto() {
     return;
   }
 
+  uploadResult.innerHTML = "⏳ Loading...";
   progressText.style.display = "block";
-  uploadResult.innerHTML = "";
+  progressText.innerHTML = ""; // Kosongkan progress sebelumnya
 
   for (let i = 0; i < files.length; i++) {
+    const progressBar = document.createElement("div");
+    progressBar.style.width = "0%";
+    progressBar.style.height = "10px";
+    progressBar.style.background = "#0d6efd";
+    progressBar.style.margin = "5px 0";
+    progressText.appendChild(progressBar);
+
     const file = files[i];
     const compressedBlob = await compressImage(file);
 
@@ -79,18 +87,20 @@ async function uploadFoto() {
           body: data,
         });
 
-        const result = await response.text();
-        if (result.toLowerCase().includes("https://") || result.toLowerCase().includes("drive")) {
-          uploadResult.innerHTML += `✅ FILE SUKSES UPLOAD<br>`;
+        if (response.ok) {
+          progressBar.style.width = "100%";
+          progressBar.style.background = "#198754"; // Hijau
         } else {
-          uploadResult.innerHTML += `❌ FILE GAGAL UPLOAD<br>`;
+          progressBar.style.width = "100%";
+          progressBar.style.background = "#dc3545"; // Merah
         }
       } catch (err) {
-        uploadResult.innerHTML += `❌ FILE GAGAL UPLOAD<br>`;
+        progressBar.style.width = "100%";
+        progressBar.style.background = "#dc3545"; // Merah
       }
 
       if (i === files.length - 1) {
-        progressText.style.display = "none";
+        uploadResult.innerHTML = "✅ Selesai upload.";
       }
     };
 
