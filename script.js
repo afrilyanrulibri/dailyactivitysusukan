@@ -42,7 +42,7 @@ async function uploadFoto() {
     data.append("mimeType", file.type);
 
     try {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec", {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec", {
         method: "POST",
         body: data,
       });
