@@ -1,26 +1,34 @@
+// Variabel global untuk menyimpan lokasi dan link hasil upload
+let currentLatitude = null;
+let currentLongitude = null;
+let uploadedFileLink = "";
+
+// Fungsi ambil lokasi GPS
 function shareLocation() {
   const lokasiText = document.getElementById("lokasi");
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        lokasiText.textContent = `Lokasi: Latitude ${position.coords.latitude}, Longitude ${position.coords.longitude}`;
+        currentLatitude = position.coords.latitude;
+        currentLongitude = position.coords.longitude;
+        lokasiText.textContent = `Lokasi: Latitude ${currentLatitude}, Longitude ${currentLongitude}`;
       },
       (error) => {
-        lokasiText.textContent = "Gagal mengambil lokasi.";
+        lokasiText.textContent = "❌ Gagal mengambil lokasi.";
       }
     );
   } else {
-    lokasiText.textContent = "Geolocation tidak didukung.";
+    lokasiText.textContent = "❌ Geolocation tidak didukung di perangkat ini.";
   }
 }
 
-// Upload foto: perlu backend untuk upload otomatis ke Google Drive
+// Fungsi upload foto ke Google Drive via Web App
 async function uploadFoto() {
   const fileInput = document.getElementById("uploadFoto");
   const file = fileInput.files[0];
 
   if (!file) {
-    alert("Pilih file terlebih dahulu!");
+    alert("📷 Silakan pilih file foto terlebih dahulu!");
     return;
   }
 
@@ -40,7 +48,8 @@ async function uploadFoto() {
       });
 
       const result = await response.text();
-      alert("✅ Upload berhasil! Link file:\n" + result);
+      uploadedFileLink = result;
+      alert("✅ Upload berhasil!\nLink: " + result);
     } catch (err) {
       alert("❌ Gagal upload: " + err.message);
     }
@@ -48,4 +57,3 @@ async function uploadFoto() {
 
   reader.readAsDataURL(file);
 }
-
