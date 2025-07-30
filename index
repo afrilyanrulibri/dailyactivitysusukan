@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daily Activity with Location</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <h2>Form Aktivitas Harian</h2>
+  <form action="https://script.google.com/macros/s/AKfycbwmEWFoTsw-XEiOOFnl6NSzaTn9NCdGnL4rPlfLbKh8C3vRwqpPlVTJHVjS9lOVuc-ZSw/exec" method="POST">
+    <label>Activity:</label><br>
+    <input type="text" name="activity" required><br><br>
+
+    <label>Nama Mantri:</label><br>
+    <input type="text" name="namaMantri" required><br><br>
+
+    <label>Nama Nasabah:</label><br>
+    <input type="text" name="namaNasabah" required><br><br>
+
+    <label>Upload Foto:</label><br>
+    <input type="file" name="foto" accept="image/*" capture="environment"><br><br>
+
+    <label>Location (auto):</label><br>
+    <input type="text" name="location" id="location" readonly><br><br>
+
+    <input type="submit" value="Submit">
+  </form>
+
+  <script>
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+        let mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+        document.getElementById('location').value = mapsUrl;
+      });
+    } else {
+      alert("Geolocation tidak didukung di browser ini.");
+    }
+  </script>
+</body>
+</html>
