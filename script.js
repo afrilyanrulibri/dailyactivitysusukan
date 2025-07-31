@@ -1,3 +1,4 @@
+
 let currentLatitude = null;
 let currentLongitude = null;
 let uploadedFileLinks = [];
@@ -97,7 +98,7 @@ async function uploadFoto() {
           progressBar.style.background = "#198754";
           resultText.textContent = "✅ FILE SUKSES UPLOAD";
           resultText.style.color = "green";
-          uploadedFileLinks.push(result); // Link URL dari response
+          uploadedFileLinks.push(result);
         } else {
           progressBar.style.width = "100%";
           progressBar.style.background = "#dc3545";
@@ -114,7 +115,10 @@ async function uploadFoto() {
       uploadResult.appendChild(resultText);
 
       if (i === files.length - 1) {
-        progressText.innerHTML = "Selesai upload.";
+        progressText.innerHTML = "✅ Semua foto berhasil di-upload.";
+        document.getElementById("uploadFoto").style.display = "none";
+        document.querySelector("button[onclick='shareLocation()']").style.display = "none";
+        shareLocation();
       }
     };
 
