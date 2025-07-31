@@ -92,11 +92,12 @@ async function uploadFoto() {
         });
 
         if (response.ok) {
+          const result = await response.text();
           progressBar.style.width = "100%";
           progressBar.style.background = "#198754";
           resultText.textContent = "✅ FILE SUKSES UPLOAD";
           resultText.style.color = "green";
-          uploadedFileLinks.push("uploaded");
+          uploadedFileLinks.push(result); // Link URL dari response
         } else {
           progressBar.style.width = "100%";
           progressBar.style.background = "#dc3545";
