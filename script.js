@@ -1,4 +1,3 @@
-
 let currentLatitude = null;
 let currentLongitude = null;
 let uploadedFileLinks = [];
@@ -87,7 +86,7 @@ async function uploadFoto() {
       data.append("mimeType", file.type);
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzLTnB6M6ZuF_Vbc5kaCWOoMqtVX-kgPKDm1K_avaMLCCAZT1KUav4CTYNHtABYmiiN/exec", {
           method: "POST",
           body: data,
         });
@@ -153,7 +152,7 @@ function submitData() {
   data.append("longitude", currentLongitude);
   data.append("foto", uploadedFileLinks.join(", "));
 
-  fetch("https://script.google.com/macros/s/AKfycbwvUkc-VjA1aYFJR57dWOcyT57k9j4q7mq7s59PAHt2POJODLBNqvvJQnwUXK-I6wLV/exec?" + data.toString())
+  fetch("https://script.google.com/macros/s/AKfycbzLTnB6M6ZuF_Vbc5kaCWOoMqtVX-kgPKDm1K_avaMLCCAZT1KUav4CTYNHtABYmiiN/exec?" + data.toString())
     .then(res => res.text())
     .then(msg => alert("✅ " + msg))
     .catch(err => alert("❌ Gagal simpan data: " + err));
