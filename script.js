@@ -116,7 +116,7 @@ async function uploadFoto() {
       if (i === files.length - 1) {
         progressText.innerHTML = "✅ Semua foto berhasil di-upload.";
         document.getElementById("uploadFoto").style.display = "none";
-        getLocationAfterUpload(); // Ambil lokasi otomatis
+        getLocationAfterUpload();
       }
     };
 
@@ -153,9 +153,10 @@ function submitData() {
   fetch("https://script.google.com/macros/s/AKfycbzLTnB6M6ZuF_Vbc5kaCWOoMqtVX-kgPKDm1K_avaMLCCAZT1KUav4CTYNHtABYmiiN/exec?" + data.toString())
     .then(res => res.text())
     .then(msg => {
-      alert("✅ " + msg);
+      const msgBox = document.getElementById("messageBox");
+      msgBox.textContent = "✅ " + msg;
+      msgBox.style.display = "block";
 
-      // 🔁 Reset semua input dan variabel
       document.getElementById("activity").value = "";
       document.getElementById("pekerja").value = "";
       document.getElementById("nasabah").value = "";
@@ -168,6 +169,10 @@ function submitData() {
       uploadedFileLinks = [];
       currentLatitude = null;
       currentLongitude = null;
+
+      setTimeout(() => {
+        msgBox.style.display = "none";
+      }, 3000);
     })
     .catch(err => alert("❌ Gagal simpan data: " + err));
 }
