@@ -75,11 +75,10 @@
     function showMonitoring() {
       document.getElementById("monitoring-section").style.display = "block";
     }
-
     function verifyPassword() {
       const password = document.getElementById("monitoring-password").value;
       if (password === "445566") {
-        window.location.href = "monitoring.html"; // Halaman monitoring nanti dibuat
+        window.location.href = "monitoring.html";
       } else {
         alert("❌ Password salah!");
       }
