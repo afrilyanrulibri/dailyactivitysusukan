@@ -8,25 +8,49 @@
   <link rel="icon" href="white%20BRI_2020.svg.png" />
   <style>
     .menu-wrapper {
-      margin: 30px auto;
+      margin: 40px auto;
       text-align: center;
     }
     .menu-btn {
-      display: block;
-      width: 200px;
-      margin: 15px auto;
-      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 90%;
+      max-width: 320px;
+      margin: 16px auto;
+      padding: 16px 20px;
       font-size: 18px;
-      border-radius: 12px;
-      background-color: #007bff;
+      font-weight: 600;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0060AE, #007bff);
       color: white;
-      font-weight: bold;
       border: none;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
     .menu-btn:hover {
-      background-color: #005ec4;
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #0050a3, #006ae3);
+    }
+    .menu-btn:active {
+      transform: scale(0.98);
+    }
+    input[type="password"] {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 90%;
+      max-width: 300px;
+      margin: 10px auto;
+      font-size: 16px;
+      text-align: center;
+      display: block;
+    }
+    #monitoring-section {
+      display: none;
+      margin-top: 20px;
     }
     .footer {
       margin-top: 60px;
@@ -34,22 +58,10 @@
       font-size: 13px;
       color: #777;
     }
-    #monitoring-section {
-      display: none;
-      margin-top: 20px;
-    }
-    input[type="password"] {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      width: 200px;
-      margin: 10px auto;
-      display: block;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
     <img src="white%20BRI_2020.svg.png" alt="BRI" class="logo-bri" />
     <div>
@@ -57,9 +69,14 @@
     </div>
   </header>
 
+  <!-- Menu -->
   <div class="menu-wrapper">
-    <button class="menu-btn" onclick="window.location.href='form.html'">📝 Input</button>
-    <button class="menu-btn" onclick="showMonitoring()">📊 Monitoring</button>
+    <button class="menu-btn" onclick="window.location.href='form.html'">
+      📝 Input Aktivitas
+    </button>
+    <button class="menu-btn" onclick="showMonitoring()">
+      📊 Monitoring Aktivitas
+    </button>
 
     <div id="monitoring-section">
       <input type="password" id="monitoring-password" placeholder="Masukkan Password" />
@@ -67,14 +84,17 @@
     </div>
   </div>
 
+  <!-- Footer -->
   <div class="footer">
-    &copy; 2025 BRI Unit Susukan
+    &copy; 2025 BRI Unit Susukan — Daily Activity
   </div>
 
+  <!-- Script -->
   <script>
     function showMonitoring() {
       document.getElementById("monitoring-section").style.display = "block";
     }
+
     function verifyPassword() {
       const password = document.getElementById("monitoring-password").value;
       if (password === "445566") {
