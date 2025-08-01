@@ -28,15 +28,18 @@ function ambilLokasiOtomatis() {
         lokasiText.textContent = `Lokasi: ${currentLatitude}, ${currentLongitude}`;
         validateForm();
       },
-      () => showToast("❌ Gagal mengambil lokasi otomatis", false),
+      (error) => {
+        showToast("❌ Gagal ambil lokasi: " + error.message, false);
+        console.error("Geolocation error:", error);
+      },
       {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 1,
+        maximumAge: 0,
       }
     );
   } else {
-    showToast("❌ Geolocation tidak tersedia.", false);
+    showToast("❌ Geolocation tidak didukung.", false);
   }
 }
 
@@ -77,6 +80,7 @@ async function uploadFoto() {
 
     const bar = document.createElement("div");
     bar.className = "progress-bar";
+    bar.style.width = "0%";
     uploadResult.appendChild(bar);
 
     const reader = new FileReader();
@@ -149,6 +153,14 @@ function resetForm() {
 }
 
 function submitData() {
+  const btn = document.getElementById("submitBtn");
+  const loader = document.getElementById("loaderSubmit");
+  const text = document.getElementById("submitText");
+
+  btn.disabled = true;
+  loader.style.display = "inline-block";
+  text.textContent = "Mengirim...";
+
   const data = new URLSearchParams();
   data.append("activity", document.getElementById("activity").value);
   data.append("pekerja", document.getElementById("pekerja").value);
@@ -163,5 +175,10 @@ function submitData() {
       showToast("✅ " + msg);
       resetForm();
     })
-    .catch(err => showToast("❌ Gagal simpan: " + err, false));
+    .catch(err => showToast("❌ Gagal simpan: " + err, false))
+    .finally(() => {
+      text.textContent = "Submit";
+      loader.style.display = "none";
+      btn.disabled = true;
+    });
 }
