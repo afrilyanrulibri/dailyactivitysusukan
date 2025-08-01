@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daily Activity</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/7/79/Logo_Bank_BRI.svg" />
 </head>
 <body>
   <header>
-    <h1>Daily Activity<br><span>BRI Unit Susukan</span></h1>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Logo_Bank_BRI.svg" alt="BRI" class="logo-bri" />
+    <div>
+      <h1>Daily Activity<br><span>BRI Unit Susukan</span></h1>
+    </div>
   </header>
 
   <section class="form-wrapper">
@@ -47,7 +51,10 @@
 
       <p id="lokasi"></p>
 
-      <button id="submitBtn" onclick="submitData()" disabled>Submit</button>
+      <button id="submitBtn" onclick="submitData()" disabled>
+        <span id="submitText">Submit</span>
+        <span class="loader" id="loaderSubmit" style="display:none;"></span>
+      </button>
     </main>
   </section>
 
