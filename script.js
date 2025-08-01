@@ -31,8 +31,8 @@ function ambilLokasiOtomatis() {
       () => showToast("❌ Gagal mengambil lokasi otomatis", false),
       {
         enableHighAccuracy: false,
-        timeout: 5000,
-        maximumAge: 5000,
+        timeout: 10000,
+        maximumAge: 1,
       }
     );
   } else {
