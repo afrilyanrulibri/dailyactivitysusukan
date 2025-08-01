@@ -6,6 +6,48 @@
   <title>Daily Activity</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="white%20BRI_2020.svg.png" />
+  <style>
+    .menu-wrapper {
+      margin: 30px auto;
+      text-align: center;
+    }
+    .menu-btn {
+      display: block;
+      width: 200px;
+      margin: 15px auto;
+      padding: 14px;
+      font-size: 18px;
+      border-radius: 12px;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .menu-btn:hover {
+      background-color: #005ec4;
+    }
+    .footer {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+    }
+    #monitoring-section {
+      display: none;
+      margin-top: 20px;
+    }
+    input[type="password"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 200px;
+      margin: 10px auto;
+      display: block;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -15,50 +57,33 @@
     </div>
   </header>
 
-  <section class="form-wrapper">
-    <main>
-      <label for="activity">Activity</label>
-      <select id="activity" onchange="validateForm()">
-        <option value="">-- Pilih Activity --</option>
-        <option>OTS PINJAMAN</option>
-        <option>PUS</option>
-        <option>QRIS</option>
-        <option>SIMPANAN</option>
-      </select>
-      <div class="error" id="errorActivity"></div>
+  <div class="menu-wrapper">
+    <button class="menu-btn" onclick="window.location.href='form.html'">📝 Input</button>
+    <button class="menu-btn" onclick="showMonitoring()">📊 Monitoring</button>
 
-      <label for="pekerja">Nama Pekerja</label>
-      <select id="pekerja" onchange="validateForm()">
-        <option value="">-- Pilih Pekerja --</option>
-        <option>00156802 - EKOWATI CAHYANINGROM</option>
-        <option>00189290 - MEGA BAGUS KURNIAWAN ABADI</option>
-        <option>00189417 - DEDDY NOVIYANTO B.S</option>
-        <option>00213122 - RISKA AGUSTIANA</option>
-        <option>00270609 - SULISTIYO RINI</option>
-        <option>00288133 - GALIH RIO PAMBUDI</option>
-      </select>
-      <div class="error" id="errorPekerja"></div>
+    <div id="monitoring-section">
+      <input type="password" id="monitoring-password" placeholder="Masukkan Password" />
+      <button class="menu-btn" onclick="verifyPassword()">🔓 Masuk</button>
+    </div>
+  </div>
 
-      <label for="nasabah">Nama Nasabah / Merchant</label>
-      <input type="text" id="nasabah" placeholder="Tulis nama nasabah..." oninput="validateForm()" />
-      <div class="error" id="errorNasabah"></div>
+  <div class="footer">
+    &copy; 2025 BRI Unit Susukan — Sistem Absensi dan Monitoring Digital
+  </div>
 
-      <label for="uploadFoto">Foto</label>
-      <input type="file" id="uploadFoto" accept="image/*" multiple capture="environment" onchange="uploadFoto()" />
+  <script>
+    function showMonitoring() {
+      document.getElementById("monitoring-section").style.display = "block";
+    }
 
-      <div class="progress" id="progressText">Mengunggah...</div>
-      <div class="progress-bar-wrapper" id="uploadResult"></div>
-
-      <p id="lokasi"></p>
-
-      <button id="submitBtn" onclick="submitData()" disabled>
-        <span id="submitText">Submit</span>
-        <span class="loader" id="loaderSubmit" style="display:none;"></span>
-      </button>
-    </main>
-  </section>
-
-  <div id="toast"></div>
-  <script src="script.js"></script>
+    function verifyPassword() {
+      const password = document.getElementById("monitoring-password").value;
+      if (password === "445566") {
+        window.location.href = "monitoring.html"; // Halaman monitoring nanti dibuat
+      } else {
+        alert("❌ Password salah!");
+      }
+    }
+  </script>
 </body>
 </html>
