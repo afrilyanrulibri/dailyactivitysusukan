@@ -5,45 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Daily Activity</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    .progress {
-      display: none;
-      margin-top: 10px;
-      color: #007bff;
-    }
-    .upload-result {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .upload-success {
-      color: green;
-    }
-    .upload-fail {
-      color: red;
-    }
-  </style>
 </head>
 <body>
-  <header style="text-align: center; padding: 20px 0;">
-    <h1 style="margin: 0; line-height: 1.2; font-size: 24px;">
-      DAILY ACTIVITY<br>
-      BRI UNIT SUSUKAN
-    </h1>
+  <header>
+    <h1>Daily Activity<br><span>BRI Unit Susukan</span></h1>
   </header>
 
   <main>
-    <label for="activity">ACTIVITY</label>
-    <select id="activity">
+    <label for="activity">Activity</label>
+    <select id="activity" onchange="validateForm()">
       <option value="">-- Pilih Activity --</option>
       <option>OTS Pinjaman</option>
       <option>PUS</option>
       <option>QRIS</option>
       <option>SIMPANAN</option>
     </select>
-    <div id="errorActivity" style="color:red;"></div>
+    <div class="error" id="errorActivity"></div>
 
-    <label for="pekerja">NAMA PEKERJA</label>
-    <select id="pekerja">
+    <label for="pekerja">Nama Pekerja</label>
+    <select id="pekerja" onchange="validateForm()">
       <option value="">-- Pilih Pekerja --</option>
       <option>00156802 - EKOWATI CAHYANINGROM</option>
       <option>00189290 - MEGA BAGUS KURNIAWAN ABADI</option>
@@ -52,25 +32,25 @@
       <option>00270609 - SULISTIYO RINI</option>
       <option>00288133 - GALIH RIO PAMBUDI</option>
     </select>
-    <div id="errorPekerja" style="color:red;"></div>
+    <div class="error" id="errorPekerja"></div>
 
-    <label for="nasabah">NAMA NASABAH / MERCHANT</label>
-    <input type="text" id="nasabah" placeholder="Tulis nama nasabah...">
-    <div id="errorNasabah" style="color:red;"></div>
+    <label for="nasabah">Nama Nasabah / Merchant</label>
+    <input type="text" id="nasabah" placeholder="Tulis nama nasabah..." oninput="validateForm()">
+    <div class="error" id="errorNasabah"></div>
 
-    <label for="uploadFoto">FOTO</label>
+    <label for="uploadFoto">Foto</label>
     <input type="file" id="uploadFoto" accept="image/*" multiple capture="environment" onchange="uploadFoto()">
 
     <div class="progress" id="progressText">Mengunggah...</div>
-    <div class="upload-result" id="uploadResult"></div>
+    <div class="progress-bar-wrapper" id="uploadResult"></div>
 
-    <br><br>
-    <button onclick="shareLocation()">SHARE LOCATION</button>
+    <button id="shareBtn" onclick="shareLocation()">Share Location</button>
     <p id="lokasi"></p>
 
-    <br>
-    <button onclick="submitData()">SUBMIT</button>
+    <button id="submitBtn" onclick="submitData()" disabled>Submit</button>
   </main>
+
+  <div id="toast"></div>
 
   <script src="script.js"></script>
 </body>
