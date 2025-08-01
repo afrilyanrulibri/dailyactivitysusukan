@@ -46,6 +46,7 @@ header h1 span {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+/* Label dan Field */
 main label {
   font-weight: 600;
   margin-top: 15px;
@@ -55,12 +56,16 @@ main label {
 main select,
 main input[type="text"],
 main input[type="file"] {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 10px;
   margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
+  background-color: #fff;
 }
 
 .error {
@@ -103,6 +108,7 @@ button {
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s;
+  box-sizing: border-box;
 }
 button[disabled] {
   background-color: #ccc;
@@ -112,6 +118,7 @@ button:hover:not([disabled]) {
   background-color: #005ec4;
 }
 
+/* Loading Spinner */
 .loader {
   border: 2px solid #f3f3f3;
   border-top: 2px solid white;
@@ -123,7 +130,6 @@ button:hover:not([disabled]) {
   vertical-align: middle;
   margin-left: 8px;
 }
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
