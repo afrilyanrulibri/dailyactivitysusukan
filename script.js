@@ -113,7 +113,12 @@ async function uploadFoto() {
 
       uploadResult.appendChild(resultText);
 
-  
+  if (i === files.length - 1) {
+        progressText.innerHTML = "✅ Semua foto berhasil di-upload.";
+        document.getElementById("uploadFoto").style.display = "none";
+        getLocationAfterUpload();
+      }
+    };
 
     reader.readAsDataURL(compressedBlob);
   }
