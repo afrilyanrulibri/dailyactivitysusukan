@@ -1,6 +1,7 @@
-/* Reset & font */
+/* Reset & Font */
 body {
   margin: 0;
+  padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f7fa;
   color: #333;
@@ -24,7 +25,7 @@ header {
   object-fit: contain;
 }
 
-/* Judul */
+/* Judul Header */
 header h1 {
   font-size: 20px;
   margin: 0;
@@ -36,7 +37,7 @@ header h1 span {
   display: block;
 }
 
-/* Form Wrapper */
+/* Wrapper Form */
 .form-wrapper {
   margin: 20px auto;
   padding: 20px;
@@ -58,14 +59,13 @@ main input[type="text"],
 main input[type="file"] {
   display: block;
   width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
   padding: 10px;
   margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
   background-color: #fff;
+  box-sizing: border-box;
 }
 
 .error {
@@ -74,7 +74,13 @@ main input[type="file"] {
   margin-top: 4px;
 }
 
-/* Progress bar */
+/* Progress Upload */
+.progress {
+  font-size: 13px;
+  color: #666;
+  margin-top: 12px;
+  display: none; /* default disembunyikan */
+}
 .progress-bar-wrapper {
   width: 100%;
   height: 6px;
@@ -89,13 +95,8 @@ main input[type="file"] {
   background: linear-gradient(to right, #00c6ff, #0072ff);
   transition: width 0.4s ease;
 }
-.progress {
-  font-size: 13px;
-  color: #666;
-  margin-top: 8px;
-}
 
-/* Tombol */
+/* Tombol Submit */
 button {
   margin-top: 25px;
   width: 100%;
@@ -118,7 +119,7 @@ button:hover:not([disabled]) {
   background-color: #005ec4;
 }
 
-/* Loading Spinner */
+/* Loader Spinner */
 .loader {
   border: 2px solid #f3f3f3;
   border-top: 2px solid white;
