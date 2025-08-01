@@ -2,7 +2,7 @@ let currentLatitude = null;
 let currentLongitude = null;
 let uploadedFileLinks = [];
 
-function getLocationAfterUpload() {
+function shareLocation() {
   const lokasiText = document.getElementById("lokasi");
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
@@ -113,10 +113,11 @@ async function uploadFoto() {
 
       uploadResult.appendChild(resultText);
 
-  if (i === files.length - 1) {
+      if (i === files.length - 1) {
         progressText.innerHTML = "✅ Semua foto berhasil di-upload.";
         document.getElementById("uploadFoto").style.display = "none";
-        getLocationAfterUpload();
+        document.querySelector("button[onclick='shareLocation()']").style.display = "none";
+        shareLocation();
       }
     };
 
@@ -133,6 +134,7 @@ function submitData() {
   const errorPekerja = document.getElementById("errorPekerja");
   const errorNasabah = document.getElementById("errorNasabah");
 
+  let valid = true;
   errorActivity.textContent = activity ? "" : "Activity wajib dipilih.";
   errorPekerja.textContent = pekerja ? "" : "Nama pekerja wajib dipilih.";
   errorNasabah.textContent = nasabah ? "" : "Nama nasabah wajib diisi.";
@@ -152,27 +154,6 @@ function submitData() {
 
   fetch("https://script.google.com/macros/s/AKfycbzLTnB6M6ZuF_Vbc5kaCWOoMqtVX-kgPKDm1K_avaMLCCAZT1KUav4CTYNHtABYmiiN/exec?" + data.toString())
     .then(res => res.text())
-    .then(msg => {
-      const msgBox = document.getElementById("messageBox");
-      msgBox.textContent = "✅ " + msg;
-      msgBox.style.display = "block";
-
-      document.getElementById("activity").value = "";
-      document.getElementById("pekerja").value = "";
-      document.getElementById("nasabah").value = "";
-      document.getElementById("uploadFoto").value = "";
-      document.getElementById("uploadFoto").style.display = "block";
-      document.getElementById("progressText").style.display = "none";
-      document.getElementById("uploadResult").innerHTML = "";
-      document.getElementById("lokasi").textContent = "";
-
-      uploadedFileLinks = [];
-      currentLatitude = null;
-      currentLongitude = null;
-
-      setTimeout(() => {
-        msgBox.style.display = "none";
-      }, 3000);
-    })
+    .then(msg => alert("✅ " + msg))
     .catch(err => alert("❌ Gagal simpan data: " + err));
 }
