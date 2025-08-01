@@ -18,25 +18,21 @@ function validateForm() {
   submitBtn.disabled = !valid;
 }
 
-function shareLocation() {
+function ambilLokasiOtomatis() {
   const lokasiText = document.getElementById("lokasi");
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        if (position.coords.accuracy > 50) {
-          showToast("⚠️ Lokasi kurang akurat (" + Math.round(position.coords.accuracy) + "m)", false);
-          return;
-        }
         currentLatitude = position.coords.latitude;
         currentLongitude = position.coords.longitude;
         lokasiText.textContent = `Lokasi: ${currentLatitude}, ${currentLongitude}`;
         validateForm();
       },
-      () => showToast("❌ Gagal mengambil lokasi.", false),
+      () => showToast("❌ Gagal mengambil lokasi otomatis", false),
       {
         enableHighAccuracy: false,
         timeout: 5000,
-        maximumAge: 10000,
+        maximumAge: 5000,
       }
     );
   } else {
@@ -81,7 +77,6 @@ async function uploadFoto() {
 
     const bar = document.createElement("div");
     bar.className = "progress-bar";
-    bar.style.width = "0%";
     uploadResult.appendChild(bar);
 
     const reader = new FileReader();
@@ -112,7 +107,6 @@ async function uploadFoto() {
           bar.style.background = "#198754";
           uploadedFileLinks.push(result);
 
-          // Tampilkan thumbnail
           const thumb = document.createElement("img");
           thumb.src = reader.result;
           thumb.style.width = "80px";
@@ -124,9 +118,8 @@ async function uploadFoto() {
           if (i === files.length - 1) {
             showToast("✅ Semua foto berhasil diupload.");
             fileInput.style.display = "none";
-            document.getElementById("shareBtn").style.display = "none";
             progressText.style.display = "none";
-            shareLocation();
+            ambilLokasiOtomatis();
           }
         } else {
           bar.style.background = "#dc3545";
@@ -147,7 +140,6 @@ function resetForm() {
   document.getElementById("nasabah").value = "";
   document.getElementById("uploadFoto").value = "";
   document.getElementById("uploadFoto").style.display = "block";
-  document.getElementById("shareBtn").style.display = "block";
   document.getElementById("submitBtn").disabled = true;
   document.getElementById("uploadResult").innerHTML = "";
   document.getElementById("lokasi").textContent = "";
