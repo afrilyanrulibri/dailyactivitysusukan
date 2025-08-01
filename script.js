@@ -23,8 +23,8 @@ function shareLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        if (position.coords.accuracy > 30) {
-          showToast("⚠️ Sinyal GPS kurang akurat.", false);
+        if (position.coords.accuracy > 50) {
+          showToast("⚠️ Lokasi kurang akurat (" + Math.round(position.coords.accuracy) + "m)", false);
           return;
         }
         currentLatitude = position.coords.latitude;
@@ -32,14 +32,19 @@ function shareLocation() {
         lokasiText.textContent = `Lokasi: ${currentLatitude}, ${currentLongitude}`;
         validateForm();
       },
-      () => showToast("❌ Gagal mengambil lokasi.", false)
+      () => showToast("❌ Gagal mengambil lokasi.", false),
+      {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 10000,
+      }
     );
   } else {
     showToast("❌ Geolocation tidak tersedia.", false);
   }
 }
 
-async function compressImage(file, maxWidth = 1024) {
+async function compressImage(file, maxWidth = 800) {
   return new Promise((resolve) => {
     const img = new Image();
     const canvas = document.createElement("canvas");
@@ -50,7 +55,7 @@ async function compressImage(file, maxWidth = 1024) {
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => resolve(blob), file.type, 0.7);
+        canvas.toBlob((blob) => resolve(blob), file.type, 0.6);
       };
       img.src = e.target.result;
     };
@@ -72,10 +77,11 @@ async function uploadFoto() {
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    const compressedBlob = await compressImage(file);
+    const compressedBlob = await compressImage(file, 800);
 
     const bar = document.createElement("div");
     bar.className = "progress-bar";
+    bar.style.width = "0%";
     uploadResult.appendChild(bar);
 
     const reader = new FileReader();
@@ -86,6 +92,13 @@ async function uploadFoto() {
       data.append("filename", file.name);
       data.append("mimeType", file.type);
 
+      let percent = 0;
+      const simulateProgress = setInterval(() => {
+        percent += 5;
+        bar.style.width = percent + "%";
+        if (percent >= 90) clearInterval(simulateProgress);
+      }, 100);
+
       try {
         const response = await fetch("https://script.google.com/macros/s/AKfycbzLTnB6M6ZuF_Vbc5kaCWOoMqtVX-kgPKDm1K_avaMLCCAZT1KUav4CTYNHtABYmiiN/exec", {
           method: "POST",
@@ -94,13 +107,25 @@ async function uploadFoto() {
 
         if (response.ok) {
           const result = await response.text();
+          clearInterval(simulateProgress);
+          bar.style.width = "100%";
           bar.style.background = "#198754";
           uploadedFileLinks.push(result);
+
+          // Tampilkan thumbnail
+          const thumb = document.createElement("img");
+          thumb.src = reader.result;
+          thumb.style.width = "80px";
+          thumb.style.marginTop = "10px";
+          thumb.style.borderRadius = "10px";
+          uploadResult.appendChild(thumb);
+
           validateForm();
           if (i === files.length - 1) {
             showToast("✅ Semua foto berhasil diupload.");
             fileInput.style.display = "none";
             document.getElementById("shareBtn").style.display = "none";
+            progressText.style.display = "none";
             shareLocation();
           }
         } else {
@@ -116,6 +141,21 @@ async function uploadFoto() {
   }
 }
 
+function resetForm() {
+  document.getElementById("activity").value = "";
+  document.getElementById("pekerja").value = "";
+  document.getElementById("nasabah").value = "";
+  document.getElementById("uploadFoto").value = "";
+  document.getElementById("uploadFoto").style.display = "block";
+  document.getElementById("shareBtn").style.display = "block";
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("uploadResult").innerHTML = "";
+  document.getElementById("lokasi").textContent = "";
+  uploadedFileLinks = [];
+  currentLatitude = null;
+  currentLongitude = null;
+}
+
 function submitData() {
   const data = new URLSearchParams();
   data.append("activity", document.getElementById("activity").value);
@@ -127,6 +167,9 @@ function submitData() {
 
   fetch("https://script.google.com/macros/s/AKfycbzLTnB6M6ZuF_Vbc5kaCWOoMqtVX-kgPKDm1K_avaMLCCAZT1KUav4CTYNHtABYmiiN/exec?" + data.toString())
     .then(res => res.text())
-    .then(msg => showToast("✅ " + msg))
+    .then(msg => {
+      showToast("✅ " + msg);
+      resetForm();
+    })
     .catch(err => showToast("❌ Gagal simpan: " + err, false));
 }
