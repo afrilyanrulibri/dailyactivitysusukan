@@ -1,46 +1,60 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="utf-8">
-  <title>Activity Today - Select Role</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body{font-family:sans-serif;padding:24px}
-    .card{max-width:420px;margin:auto;padding:18px;border:1px solid #ddd;border-radius:8px}
-    button{padding:10px 14px;margin:6px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Activity Susukan</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Icon dari Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <div class="card">
-    <h2>Pilih Akses</h2>
-    <div>
-      <button id="btnKaunit">Kaunit / Supervisor</button>
-      <button id="btnMantri">Mantri</button>
-    </div>
-    <div id="kaunitPassWrap" style="display:none;margin-top:12px;">
-      <input id="kaunitPass" placeholder="Masukkan password Kaunit" type="password">
-      <button id="submitPass">Masuk</button>
-    </div>
-  </div>
+    <header class="app-header">
+        <img src="Brimo samping.png" alt="BRIMO Logo" class="logo">
+        <h1>Daily Activity Susukan</h1>
+    </header>
 
-  <script>
-    const PASSWORD_KAUNIT = "445566";
-    document.getElementById("btnKaunit").addEventListener("click", ()=> {
-      document.getElementById("kaunitPassWrap").style.display = "block";
-    });
-    document.getElementById("btnMantri").addEventListener("click", ()=> {
-      sessionStorage.setItem("role","mantri");
-      window.location.href = "mantri.html";
-    });
-    document.getElementById("submitPass").addEventListener("click", ()=> {
-      const p = document.getElementById("kaunitPass").value;
-      if (p === PASSWORD_KAUNIT) {
-        sessionStorage.setItem("role","kaunit");
-        window.location.href = "kaunit.html";
-      } else {
-        alert("Password salah.");
-      }
-    });
-  </script>
+    <main class="container">
+        <h2><i class="fa-solid fa-user-shield"></i> Pilih Peran Anda</h2>
+        <div class="menu-buttons">
+            <button id="btnKaunit" class="btn blue">
+                <i class="fa-solid fa-user-tie"></i> Kaunit / Supervisor
+            </button>
+            <button id="btnMantri" class="btn green">
+                <i class="fa-solid fa-briefcase"></i> Mantri
+            </button>
+        </div>
+
+        <div id="kaunitPassWrap" class="pass-wrapper">
+            <input id="kaunitPass" type="password" placeholder="Masukkan password Kaunit">
+            <button id="submitPass" class="btn small">
+                <i class="fa-solid fa-key"></i> Masuk
+            </button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 BRI Unit Susukan</p>
+    </footer>
+
+    <script>
+        const PASSWORD_KAUNIT = "445566";
+        document.getElementById("btnKaunit").addEventListener("click", () => {
+            document.getElementById("kaunitPassWrap").style.display = "flex";
+        });
+        document.getElementById("btnMantri").addEventListener("click", () => {
+            sessionStorage.setItem("role", "mantri");
+            window.location.href = "mantri.html";
+        });
+        document.getElementById("submitPass").addEventListener("click", () => {
+            const p = document.getElementById("kaunitPass").value;
+            if (p === PASSWORD_KAUNIT) {
+                sessionStorage.setItem("role", "kaunit");
+                window.location.href = "kaunit.html";
+            } else {
+                alert("Password salah.");
+            }
+        });
+    </script>
 </body>
 </html>
