@@ -1,79 +1,65 @@
-// ---------- CONFIG ----------
-const WEBAPP_URL = "https://script.google.com/macros/s/XXXXX/exec"; // <-- ganti dengan Web App URL mu
-const PASSWORD_KAUNIT = "445566";
-const MANTRI_OPTIONS = [
-  "156802 EKOWATI CAHYANINGROM",
-  "189290 MEGA BAGUS KURNIAWAN ABADI",
-  "189417 DEDDY NOVIYANTO B.S",
-  "213122 RISKA AGUSTIANA",
-  "270609 SULISTIYO RINI",
-  "288133 GALIH RIO PAMBUDI"
-];
-// -----------------------------
+document.getElementById("formActivity").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-// AUTH helpers (simple)
-function requireAuth(neededRole) {
-  const role = sessionStorage.getItem("role");
-  if (!role || role !== neededRole) {
-    window.location.href = "index.html";
-    return false;
-  }
-  return true;
+    let webAppUrl = "https://script.google.com/macros/s/AKfycbzGa3NPrKyOy_gZLDgMAN3F9XfsMlg4styre1KfzqYAR9gLVpJgc8gxVQtimE6p9r9O/exec"; // Ganti dengan URL Web App kamu
+
+    // Ambil data dari form
+    let activity = document.getElementById("activity").value;
+    let pekerja = document.getElementById("pekerja").value;
+    let nasabah = document.getElementById("nasabah").value;
+    let nik = document.getElementById("nik").value;
+    let nomorBrimen = document.getElementById("nomorbrimen").value;
+    let keterangan = document.getElementById("keterangan").value;
+    let latitude = document.getElementById("latitude").value;
+    let longitude = document.getElementById("longitude").value;
+
+    // Ambil file foto
+    let fileInput = document.getElementById("foto").files[0];
+    let base64Foto = "";
+
+    if (fileInput) {
+        base64Foto = await toBase64(fileInput);
+        base64Foto = base64Foto.replace(/^data:image\/[a-z]+;base64,/, ""); // buang header
+    }
+
+    // Kirim ke Google Apps Script
+    let formData = new URLSearchParams();
+    formData.append("activity", activity);
+    formData.append("pekerja", pekerja);
+    formData.append("nasabah", nasabah);
+    formData.append("nik", nik);
+    formData.append("nomorbrimen", nomorBrimen);
+    formData.append("latitude", latitude);
+    formData.append("longitude", longitude);
+    formData.append("keterangan", keterangan);
+    formData.append("filename", fileInput ? fileInput.name : "foto.jpg");
+    formData.append("mimeType", fileInput ? fileInput.type : "image/jpeg");
+    formData.append("file", base64Foto);
+
+    try {
+        let res = await fetch(webAppUrl, {
+            method: "POST",
+            body: formData
+        });
+        let result = await res.json();
+
+        if (result.status === "sukses") {
+            alert("Data berhasil dikirim!");
+            document.getElementById("formActivity").reset();
+        } else {
+            alert("Gagal: " + result.error);
+        }
+    } catch (err) {
+        alert("Error: " + err.toString());
+    }
+});
+
+// Helper untuk convert file ke Base64
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 }
-
-function loginAsKaunit(password) {
-  if (password === PASSWORD_KAUNIT) {
-    sessionStorage.setItem("role", "kaunit");
-    return true;
-  }
-  return false;
-}
-
-function loginAsMantri() {
-  sessionStorage.setItem("role", "mantri");
-}
-
-// fetch helpers
-async function apiGet(action) {
-  const url = `${WEBAPP_URL}?action=${encodeURIComponent(action)}`;
-  const r = await fetch(url);
-  return await r.json();
-}
-
-async function apiPost(formDataObj) {
-  // formDataObj is plain object
-  const body = new URLSearchParams();
-  for (const k in formDataObj) body.append(k, formDataObj[k]);
-  const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
-  return await res.json();
-}
-
-// upload file as base64
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => {
-      const b64 = fr.result.split(",")[1];
-      resolve(b64);
-    };
-    fr.onerror = reject;
-    fr.readAsDataURL(file);
-  });
-}
-
-function goLogout() {
-  sessionStorage.removeItem("role");
-  window.location.href = "index.html";
-}
-
-// Utility: open Google Maps for lat/lng
-function openMaps(lat, lon) {
-  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
-  window.open(url, "_blank");
-}
-
-export {
-  requireAuth, loginAsKaunit, loginAsMantri,
-  apiGet, apiPost, fileToBase64, MANTRI_OPTIONS,
-  goLogout, openMaps
-};
