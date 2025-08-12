@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Kaunit - Input Activity Today</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:sans-serif;padding:18px}
+    .wrap{max-width:720px;margin:auto}
+    input, select, button, textarea {display:block;width:100%;padding:8px;margin:8px 0}
+    .row{display:flex;gap:8px}
+    .row > *{flex:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Kaunit / Supervisor</h2>
+    <button id="btnLogout">Logout</button>
+    <h3>Input Activity Today (Kaunit)</h3>
+    <label>Nama Mantri</label>
+    <select id="namaMantri"></select>
+
+    <label>NIK Nasabah</label>
+    <input id="nik" placeholder="NIK Nasabah">
+
+    <label>Nama Nasabah</label>
+    <input id="namaNasabah" placeholder="Nama Nasabah">
+
+    <label>Nomor Brimen Berkas</label>
+    <input id="nomorBrimen" placeholder="Nomor Brimen">
+
+    <button id="btnSubmit">Submit Kaunit</button>
+
+    <hr>
+    <a href="monitoring.html">Buka Monitoring (Kaunit)</a>
+  </div>
+
+  <script src="script-kaunit-inline.js"></script>
+  <script>
+  // Inline small wrapper (non-module) to avoid CORS in file import; copy the functions needed from script.js here:
+  // For simplicity use direct call to webapp url:
+  const WEBAPP_URL = "https://script.google.com/macros/s/XXXXX/exec"; // <-- ganti
+  const MANTRI_OPTIONS = [
+    "156802 EKOWATI CAHYANINGROM",
+    "189290 MEGA BAGUS KURNIAWAN ABADI",
+    "189417 DEDDY NOVIYANTO B.S",
+    "213122 RISKA AGUSTIANA",
+    "270609 SULISTIYO RINI",
+    "288133 GALIH RIO PAMBUDI"
+  ];
+
+  // auth check
+  if (sessionStorage.getItem("role") !== "kaunit") {
+    window.location.href = "index.html";
+  }
+
+  // populate mantri dropdown
+  const sel = document.getElementById("namaMantri");
+  MANTRI_OPTIONS.forEach(o=>{
+    const opt = document.createElement("option");
+    opt.value = o; opt.textContent = o;
+    sel.appendChild(opt);
+  });
+
+  document.getElementById("btnLogout").addEventListener("click", ()=> {
+    sessionStorage.removeItem("role");
+    window.location.href = "index.html";
+  });
+
+  document.getElementById("btnSubmit").addEventListener("click", async ()=>{
+    const namaMantri = document.getElementById("namaMantri").value;
+    const nik = document.getElementById("nik").value.trim();
+    const namaNasabah = document.getElementById("namaNasabah").value.trim();
+    const nomorBrimen = document.getElementById("nomorBrimen").value.trim();
+    if (!nik || !namaNasabah || !nomorBrimen) return alert("Lengkapi semua field.");
+    const body = new URLSearchParams();
+    body.append("action","save_kaunit");
+    body.append("namaMantri", namaMantri);
+    body.append("nik", nik);
+    body.append("namaNasabah", namaNasabah);
+    body.append("nomorBrimen", nomorBrimen);
+    const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
+    const j = await res.json();
+    if (j.ok) {
+      alert("Data Kaunit tersimpan.");
+      // optional: clear
+      document.getElementById("nik").value = "";
+      document.getElementById("namaNasabah").value = "";
+      document.getElementById("nomorBrimen").value = "";
+    } else {
+      alert("Gagal: " + (j.error || JSON.stringify(j)));
+    }
+  });
+  </script>
+</body>
+</html>
