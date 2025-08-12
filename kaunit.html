@@ -2,51 +2,42 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Kaunit - Daily Activity Susukan</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <!-- Header -->
   <header class="app-header">
     <img src="Brimo samping.png" alt="BRIMO Logo" class="logo">
     <h1>Kaunit / Supervisor</h1>
   </header>
 
   <main class="container">
-    <!-- Form Input Activity Today -->
     <section class="form-wrapper">
       <h2><i class="fa-solid fa-pen-to-square"></i> Input Activity Today</h2>
 
-      <label for="mantri">Nama Mantri</label>
-      <select id="mantri" required>
+      <label>Nama Mantri</label>
+      <select id="mantri">
         <option value="">-- Pilih Mantri --</option>
-        <option value="156802 EKOWATI CAHYANINGROM">156802 - EKOWATI CAHYANINGROM</option>
-        <option value="189290 MEGA BAGUS KURNIAWAN ABADI">189290 - MEGA BAGUS KURNIAWAN ABADI</option>
-        <option value="189417 DEDDY NOVIYANTO B.S">189417 - DEDDY NOVIYANTO B.S</option>
-        <option value="213122 RISKA AGUSTIANA">213122 - RISKA AGUSTIANA</option>
-        <option value="270609 SULISTIYO RINI">270609 - SULISTIYO RINI</option>
-        <option value="288133 GALIH RIO PAMBUDI">288133 - GALIH RIO PAMBUDI</option>
+        <!-- Option list -->
       </select>
 
-      <label for="nik">NIK Nasabah</label>
-      <input type="text" id="nik" placeholder="Masukkan NIK Nasabah" required>
+      <label>NIK Nasabah</label>
+      <input type="text" id="nik" placeholder="Masukkan NIK" required>
 
-      <label for="nasabah">Nama Nasabah</label>
-      <input type="text" id="nasabah" placeholder="Masukkan Nama Nasabah" required>
+      <label>Nama Nasabah</label>
+      <input type="text" id="nasabah" placeholder="Nama Nasabah" required>
 
-      <label for="nomorBrimen">Nomor Brimen Berkas</label>
-      <input type="text" id="nomorBrimen" placeholder="Masukkan Nomor Brimen" required>
+      <label>Nomor Brimen</label>
+      <input type="text" id="nomorBrimen" placeholder="Nomor Brimen" required>
 
-      <button id="btnSubmit"><i class="fa-solid fa-paper-plane"></i> Kirim Data</button>
+      <button id="btnSubmit" class="btn blue"><i class="fa-solid fa-paper-plane"></i> Kirim Data</button>
     </section>
 
-    <!-- Tombol Monitoring -->
-    <section class="form-wrapper" style="margin-top: 30px;">
-      <h2><i class="fa-solid fa-chart-line"></i> Monitoring</h2>
-      <button class="btn blue" id="btnMonitoring">
-        <i class="fa-solid fa-eye"></i> Lihat Monitoring
+    <section class="form-wrapper" style="margin-top:30px;">
+      <button class="btn green" id="btnMonitoring">
+        <i class="fa-solid fa-chart-line"></i> Monitoring
       </button>
     </section>
   </main>
@@ -54,56 +45,42 @@
   <div id="toast"></div>
 
   <script>
-    // Cek role agar tidak sembarang akses
-    if (sessionStorage.getItem("role") !== "kaunit") {
-      window.location.href = "index.html";
-    }
+    if (sessionStorage.getItem("role") !== "kaunit") window.location.href = "index.html";
 
-    // Submit form
     document.getElementById("btnSubmit").addEventListener("click", async () => {
       const mantri = document.getElementById("mantri").value;
       const nik = document.getElementById("nik").value.trim();
       const nasabah = document.getElementById("nasabah").value.trim();
       const nomorBrimen = document.getElementById("nomorBrimen").value.trim();
-
-      if (!mantri || !nik || !nasabah || !nomorBrimen) {
-        showToast("⚠️ Semua field wajib diisi!");
-        return;
-      }
+      if (!mantri || !nik || !nasabah || !nomorBrimen) return showToast("⚠️ Semua field wajib diisi!");
 
       try {
-        const res = await fetch("WEB_APP_URL_KAUNIT", {
+        const res = await fetch("WEB_APP_URL? ", { // ganti dengan URL Web App
           method: "POST",
           body: new URLSearchParams({
+            action: "save_kaunit",
             mantri, nik, nasabah, nomorBrimen
           })
         });
-
         const data = await res.json();
         if (data.status === "sukses") {
-          showToast("✅ Data berhasil disimpan!");
-          document.getElementById("nik").value = "";
-          document.getElementById("nasabah").value = "";
-          document.getElementById("nomorBrimen").value = "";
-        } else {
-          showToast("❌ Gagal menyimpan data!");
-        }
-      } catch (err) {
-        showToast("❌ Terjadi kesalahan koneksi!");
+          showToast("✅ Data tersimpan!");
+          ["nik","nasabah","nomorBrimen"].forEach(id => document.getElementById(id).value = "");
+        } else showToast("❌ Gagal menyimpan");
+      } catch {
+        showToast("❌ Kesalahan koneksi!");
       }
     });
 
-    // Monitoring button
-    document.getElementById("btnMonitoring").addEventListener("click", () => {
+    document.getElementById("btnMonitoring").addEventListener("click", ()=> {
       window.location.href = "monitoring.html";
     });
 
-    // Toast function
     function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.innerText = msg;
-      toast.className = "show";
-      setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.className = "show";
+      setTimeout(()=> t.className = "", 3000);
     }
   </script>
 </body>
