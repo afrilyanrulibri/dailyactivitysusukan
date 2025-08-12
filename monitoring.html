@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Monitoring</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:sans-serif;padding:18px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid #ddd;padding:6px;text-align:left}
+    .btn{padding:6px 10px;cursor:pointer;border-radius:4px}
+    .done{background:green;color:white}
+    .notdone{background:red;color:white}
+  </style>
+</head>
+<body>
+  <h2>Monitoring (Kaunit / Supervisor)</h2>
+  <button id="btnLogout">Logout</button>
+  <label>Pilih Activity</label>
+  <select id="activity">
+    <option value="">-- Pilih --</option>
+    <option>OTS Pinjaman</option>
+    <option>PUS</option>
+    <option>QRIS</option>
+    <option>SIMPANAN</option>
+  </select>
+
+  <div id="tableWrap"></div>
+
+  <script>
+  const WEBAPP_URL = "https://script.google.com/macros/s/XXXXX/exec"; // <-- ganti
+
+  if (sessionStorage.getItem("role") !== "kaunit") {
+    window.location.href = "index.html";
+  }
+
+  document.getElementById("btnLogout").addEventListener("click", ()=> {
+    sessionStorage.removeItem("role");
+    window.location.href = "index.html";
+  });
+
+  document.getElementById("activity").addEventListener("change", async ()=>{
+    const val = document.getElementById("activity").value;
+    const wrap = document.getElementById("tableWrap");
+    wrap.innerHTML = "Loading...";
+    if (val === "OTS Pinjaman") {
+      // call monitor_ots
+      const res = await fetch(`${WEBAPP_URL}?action=monitor_ots`);
+      const arr = await res.json();
+      if (!Array.isArray(arr)) { wrap.innerHTML = "No data"; return; }
+      let html = `<table><thead><tr>
+        <th>NAMA MANTRI</th><th>NIK NASABAH</th><th>NAMA NASABAH</th><th>NOMOR BRIMEN</th>
+        <th>LOCATION</th><th>KETERANGAN</th><th>ACTION</th></tr></thead><tbody>`;
+      arr.forEach(item=>{
+        const lat = item.latitude || "";
+        const lon = item.longitude || "";
+        const locationBtn = lat && lon ? `<button class="btn locBtn" data-lat="${lat}" data-lon="${lon}">Location</button>` : "";
+        const doneClass = item.done ? "done" : "notdone";
+        const doneLabel = item.done ? "DONE" : "NOT DONE";
+        html += `<tr data-row="${item.mantriRow}">
+          <td>${item.mantriName||""}</td>
+          <td>${item.nik||""}</td>
+          <td>${item.namaNasabah||""}</td>
+          <td>${item.nomorBrimen||""}</td>
+          <td>${locationBtn}</td>
+          <td>${item.keterangan||""}</td>
+          <td><button class="btn doneBtn ${doneClass}" data-row="${item.mantriRow}">${doneLabel}</button></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      wrap.innerHTML = html;
+    } else if (val === "PUS" || val === "QRIS" || val === "SIMPANAN") {
+      // list mantri then filter by activity
+      const res = await fetch(`${WEBAPP_URL}?action=list_mantri`);
+      const arr = await res.json();
+      const filt = arr.filter(r => (r.activity||"").toLowerCase() === val.toLowerCase());
+      if (!filt.length) { wrap.innerHTML = "No data"; return; }
+      let html = `<table><thead><tr>
+        <th>NAMA MANTRI</th><th>NAMA NASABAH / MERCHANT</th><th>FOTO</th><th>LOCATION</th><th>ACTION</th></tr></thead><tbody>`;
+      filt.forEach(item=>{
+        const foto = item.fotoUrl ? `<a href="${item.fotoUrl}" target="_blank">Lihat Foto</a>` : "";
+        const lat = item.latitude || "";
+        const lon = item.longitude || "";
+        const locationBtn = lat && lon ? `<button class="btn locBtn" data-lat="${lat}" data-lon="${lon}">Location</button>` : "";
+        const doneClass = item.done ? "done" : "notdone";
+        const doneLabel = item.done ? "DONE" : "NOT DONE";
+        html += `<tr data-row="${item.row}">
+          <td>${item.namaMantri||""}</td>
+          <td>${item.namaNasabah||""}</td>
+          <td>${foto}</td>
+          <td>${locationBtn}</td>
+          <td><button class="btn doneBtn ${doneClass}" data-row="${item.row}">${doneLabel}</button></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      wrap.innerHTML = html;
+    } else {
+      wrap.innerHTML = "";
+    }
+
+    // attach handlers
+    document.querySelectorAll(".locBtn").forEach(b=>{
+      b.addEventListener("click", ()=> {
+        const lat = b.dataset.lat, lon = b.dataset.lon;
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`, "_blank");
+      });
+    });
+
+    document.querySelectorAll(".doneBtn").forEach(b=>{
+      b.addEventListener("click", async ()=>{
+        const row = b.dataset.row;
+        // toggle
+        const isDone = b.classList.contains("done");
+        const newVal = !isDone;
+        const body = new URLSearchParams();
+        body.append("action","mark_done");
+        body.append("row", row);
+        body.append("value", newVal ? "TRUE" : "FALSE");
+        const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
+        const j = await res.json();
+        if (j.ok) {
+          b.classList.toggle("done");
+          b.classList.toggle("notdone");
+          b.textContent = newVal ? "DONE" : "NOT DONE";
+        } else {
+          alert("Gagal update: " + JSON.stringify(j));
+        }
+      });
+    });
+
+  });
+  </script>
+</body>
+</html>
