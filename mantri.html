@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mantri - Activity</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:sans-serif;padding:18px}
+    .wrap{max-width:720px;margin:auto}
+    input, select, button, textarea {display:block;width:100%;padding:8px;margin:8px 0}
+    img.preview{max-width:200px;border:1px solid #ccc;padding:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Mantri</h2>
+    <button id="btnLogout">Logout</button>
+
+    <label>Activity</label>
+    <select id="activity">
+      <option value="">-- Pilih --</option>
+      <option>OTS Pinjaman</option>
+      <option>PUS</option>
+      <option>QRIS</option>
+      <option>SIMPANAN</option>
+    </select>
+
+    <div id="common">
+      <label>Nama Mantri</label>
+      <select id="namaMantri"></select>
+    </div>
+
+    <!-- OTS section -->
+    <div id="otsSection" style="display:none">
+      <label>Pilih Record Kaunit (ambil NIK/Nama/Brimen)</label>
+      <select id="kaunitRecords"></select>
+      <label>NIK Nasabah</label>
+      <input id="nik" readonly>
+      <label>Nama Nasabah</label>
+      <input id="namaNasabah" readonly>
+      <label>Nomor Brimen</label>
+      <input id="nomorBrimen" readonly>
+      <label>Keterangan</label>
+      <textarea id="keterangan" placeholder="Keterangan dari mantri"></textarea>
+      <button id="btnShareLocation">Share Location</button>
+      <div>Lat: <span id="lat"></span> Lon: <span id="lon"></span></div>
+      <button id="btnSubmitOts">Submit OTS</button>
+    </div>
+
+    <!-- Other activities section -->
+    <div id="otherSection" style="display:none">
+      <label>Nama Nasabah / Merchant</label>
+      <input id="namaMerchant">
+      <label>Foto (ambil dari galeri)</label>
+      <input type="file" id="fotoInput" accept="image/*">
+      <img id="preview" class="preview" src="" style="display:none">
+      <button id="btnShareLocation2">Share Location</button>
+      <div>Lat: <span id="lat2"></span> Lon: <span id="lon2"></span></div>
+      <label>Keterangan</label>
+      <textarea id="keterangan2" placeholder="Keterangan (opsional)"></textarea>
+      <button id="btnSubmitOther">Submit</button>
+    </div>
+
+    <hr>
+    <a href="index.html">Kembali</a>
+  </div>
+
+  <script>
+  const WEBAPP_URL = "https://script.google.com/macros/s/XXXXX/exec"; // <-- ganti
+  const MANTRI_OPTIONS = [
+    "156802 EKOWATI CAHYANINGROM",
+    "189290 MEGA BAGUS KURNIAWAN ABADI",
+    "189417 DEDDY NOVIYANTO B.S",
+    "213122 RISKA AGUSTIANA",
+    "270609 SULISTIYO RINI",
+    "288133 GALIH RIO PAMBUDI"
+  ];
+
+  if (sessionStorage.getItem("role") !== "mantri") {
+    window.location.href = "index.html";
+  }
+
+  // populate mantri dropdown
+  const sel = document.getElementById("namaMantri");
+  MANTRI_OPTIONS.forEach(o=>{
+    const opt = document.createElement("option"); opt.value=o; opt.textContent=o; sel.appendChild(opt);
+  });
+
+  document.getElementById("btnLogout").addEventListener("click", ()=> {
+    sessionStorage.removeItem("role");
+    window.location.href = "index.html";
+  });
+
+  const activity = document.getElementById("activity");
+  const otsSection = document.getElementById("otsSection");
+  const otherSection = document.getElementById("otherSection");
+
+  activity.addEventListener("change", async ()=> {
+    const val = activity.value;
+    if (val === "OTS Pinjaman") {
+      otsSection.style.display = "block";
+      otherSection.style.display = "none";
+      // fetch kaunit records
+      const res = await fetch(`${WEBAPP_URL}?action=list_kaunit`);
+      const arr = await res.json();
+      const sel = document.getElementById("kaunitRecords");
+      sel.innerHTML = "";
+      arr.forEach(item=>{
+        const opt = document.createElement("option");
+        opt.value = JSON.stringify(item);
+        opt.textContent = `${item.nik} — ${item.namaNasabah} — ${item.nomorBrimen}`;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", ()=> {
+        const obj = JSON.parse(sel.value);
+        document.getElementById("nik").value = obj.nik || "";
+        document.getElementById("namaNasabah").value = obj.namaNasabah || "";
+        document.getElementById("nomorBrimen").value = obj.nomorBrimen || "";
+      });
+    } else if (val === "PUS" || val === "QRIS" || val === "SIMPANAN") {
+      otsSection.style.display = "none";
+      otherSection.style.display = "block";
+    } else {
+      otsSection.style.display = "none";
+      otherSection.style.display = "none";
+    }
+  });
+
+  // Share location for OTS
+  document.getElementById("btnShareLocation").addEventListener("click", ()=> {
+    if (!navigator.geolocation) return alert("Geolocation tidak didukung");
+    navigator.geolocation.getCurrentPosition(function(pos){
+      document.getElementById("lat").textContent = pos.coords.latitude;
+      document.getElementById("lon").textContent = pos.coords.longitude;
+      document.getElementById("btnShareLocation").dataset.lat = pos.coords.latitude;
+      document.getElementById("btnShareLocation").dataset.lon = pos.coords.longitude;
+    }, function(err){ alert("Gagal ambil lokasi: "+err.message) }, { enableHighAccuracy:true });
+  });
+
+  // Submit OTS
+  document.getElementById("btnSubmitOts").addEventListener("click", async ()=> {
+    const activity = "OTS Pinjaman";
+    const namaMantri = document.getElementById("namaMantri").value;
+    const nik = document.getElementById("nik").value;
+    const namaNasabah = document.getElementById("namaNasabah").value;
+    const nomorBrimen = document.getElementById("nomorBrimen").value;
+    const lat = document.getElementById("btnShareLocation").dataset.lat || "";
+    const lon = document.getElementById("btnShareLocation").dataset.lon || "";
+    const keterangan = document.getElementById("keterangan").value || "";
+
+    if (!nik || !namaNasabah || !nomorBrimen) return alert("Pilih record Kaunit terlebih dahulu.");
+    const body = new URLSearchParams();
+    body.append("action","save_mantri");
+    body.append("activity", activity);
+    body.append("namaMantri", namaMantri);
+    body.append("nik", nik);
+    body.append("namaNasabah", namaNasabah);
+    body.append("nomorBrimen", nomorBrimen);
+    body.append("latitude", lat);
+    body.append("longitude", lon);
+    body.append("keterangan", keterangan);
+    body.append("fotoUrl", "");
+    const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
+    const j = await res.json();
+    if (j.ok) {
+      alert("OTS berhasil dikirim.");
+      // clear keterangan
+      document.getElementById("keterangan").value = "";
+    } else {
+      alert("Gagal: " + (j.error || JSON.stringify(j)));
+    }
+  });
+
+  // Other activities (PUS/QRIS/SIMPANAN)
+  let selectedFileBase64 = null;
+  document.getElementById("fotoInput").addEventListener("change", async (ev)=> {
+    const f = ev.target.files[0];
+    if (!f) return;
+    const fr = new FileReader();
+    fr.onload = ()=> {
+      const dataUrl = fr.result;
+      document.getElementById("preview").src = dataUrl;
+      document.getElementById("preview").style.display = "block";
+      selectedFileBase64 = dataUrl.split(",")[1]; // base64
+    };
+    fr.readAsDataURL(f);
+  });
+
+  document.getElementById("btnShareLocation2").addEventListener("click", ()=> {
+    if (!navigator.geolocation) return alert("Geolocation tidak didukung");
+    navigator.geolocation.getCurrentPosition(function(pos){
+      document.getElementById("lat2").textContent = pos.coords.latitude;
+      document.getElementById("lon2").textContent = pos.coords.longitude;
+      document.getElementById("btnShareLocation2").dataset.lat = pos.coords.latitude;
+      document.getElementById("btnShareLocation2").dataset.lon = pos.coords.longitude;
+    }, function(err){ alert("Gagal ambil lokasi: "+err.message) }, { enableHighAccuracy:true });
+  });
+
+  document.getElementById("btnSubmitOther").addEventListener("click", async ()=> {
+    const activity = document.getElementById("activity").value;
+    const namaMantri = document.getElementById("namaMantri").value;
+    const namaMerchant = document.getElementById("namaMerchant").value.trim();
+    const lat = document.getElementById("btnShareLocation2").dataset.lat || "";
+    const lon = document.getElementById("btnShareLocation2").dataset.lon || "";
+    const ket = document.getElementById("keterangan2").value || "";
+
+    if (!namaMerchant) return alert("Isi nama nasabah/merchant.");
+    // if file present, upload first
+    let fotoUrl = "";
+    if (selectedFileBase64) {
+      const bodyUp = new URLSearchParams();
+      bodyUp.append("action","upload");
+      bodyUp.append("filename", `foto_${Date.now()}.jpg`);
+      bodyUp.append("mimeType", "image/jpeg");
+      bodyUp.append("file", selectedFileBase64);
+      const upRes = await fetch(WEBAPP_URL, { method: "POST", body: bodyUp });
+      const jr = await upRes.json();
+      if (jr.ok && jr.url) fotoUrl = jr.url;
+    }
+
+    // save mantri
+    const body = new URLSearchParams();
+    body.append("action","save_mantri");
+    body.append("activity", activity);
+    body.append("namaMantri", namaMantri);
+    body.append("nik", "");
+    body.append("namaNasabah", namaMerchant);
+    body.append("nomorBrimen", "");
+    body.append("latitude", lat);
+    body.append("longitude", lon);
+    body.append("keterangan", ket);
+    body.append("fotoUrl", fotoUrl);
+    const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
+    const j = await res.json();
+    if (j.ok) {
+      alert("Data dikirim.");
+      // reset form
+      document.getElementById("namaMerchant").value = "";
+      document.getElementById("preview").style.display = "none";
+      selectedFileBase64 = null;
+    } else {
+      alert("Gagal: " + (j.error || JSON.stringify(j)));
+    }
+  });
+  </script>
+</body>
+</html>
