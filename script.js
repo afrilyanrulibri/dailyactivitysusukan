@@ -1,7 +1,7 @@
 document.getElementById("formActivity").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    let webAppUrl = "https://script.google.com/macros/s/AKfycbzGa3NPrKyOy_gZLDgMAN3F9XfsMlg4styre1KfzqYAR9gLVpJgc8gxVQtimE6p9r9O/exec"; // Ganti dengan URL Web App kamu
+    let webAppUrl = "https://script.google.com/macros/s/AKfycbyjfNlA-S7hsPZqy6vWQcQRaU-8PTkS7seJFk7xiVNNHiBEjoKKkXHSOTR3lsSeYGfc/exec"; // Ganti dengan URL Web App kamu
 
     // Ambil data dari form
     let activity = document.getElementById("activity").value;
