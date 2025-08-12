@@ -1,96 +1,110 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="utf-8">
-  <title>Kaunit - Input Activity Today</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body{font-family:sans-serif;padding:18px}
-    .wrap{max-width:720px;margin:auto}
-    input, select, button, textarea {display:block;width:100%;padding:8px;margin:8px 0}
-    .row{display:flex;gap:8px}
-    .row > *{flex:1}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaunit - Daily Activity Susukan</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <div class="wrap">
-    <h2>Kaunit / Supervisor</h2>
-    <button id="btnLogout">Logout</button>
-    <h3>Input Activity Today (Kaunit)</h3>
-    <label>Nama Mantri</label>
-    <select id="namaMantri"></select>
+  <!-- Header -->
+  <header class="app-header">
+    <img src="Brimo samping.png" alt="BRIMO Logo" class="logo">
+    <h1>Kaunit / Supervisor</h1>
+  </header>
 
-    <label>NIK Nasabah</label>
-    <input id="nik" placeholder="NIK Nasabah">
+  <main class="container">
+    <!-- Form Input Activity Today -->
+    <section class="form-wrapper">
+      <h2><i class="fa-solid fa-pen-to-square"></i> Input Activity Today</h2>
 
-    <label>Nama Nasabah</label>
-    <input id="namaNasabah" placeholder="Nama Nasabah">
+      <label for="mantri">Nama Mantri</label>
+      <select id="mantri" required>
+        <option value="">-- Pilih Mantri --</option>
+        <option value="156802 EKOWATI CAHYANINGROM">156802 - EKOWATI CAHYANINGROM</option>
+        <option value="189290 MEGA BAGUS KURNIAWAN ABADI">189290 - MEGA BAGUS KURNIAWAN ABADI</option>
+        <option value="189417 DEDDY NOVIYANTO B.S">189417 - DEDDY NOVIYANTO B.S</option>
+        <option value="213122 RISKA AGUSTIANA">213122 - RISKA AGUSTIANA</option>
+        <option value="270609 SULISTIYO RINI">270609 - SULISTIYO RINI</option>
+        <option value="288133 GALIH RIO PAMBUDI">288133 - GALIH RIO PAMBUDI</option>
+      </select>
 
-    <label>Nomor Brimen Berkas</label>
-    <input id="nomorBrimen" placeholder="Nomor Brimen">
+      <label for="nik">NIK Nasabah</label>
+      <input type="text" id="nik" placeholder="Masukkan NIK Nasabah" required>
 
-    <button id="btnSubmit">Submit Kaunit</button>
+      <label for="nasabah">Nama Nasabah</label>
+      <input type="text" id="nasabah" placeholder="Masukkan Nama Nasabah" required>
 
-    <hr>
-    <a href="monitoring.html">Buka Monitoring (Kaunit)</a>
-  </div>
+      <label for="nomorBrimen">Nomor Brimen Berkas</label>
+      <input type="text" id="nomorBrimen" placeholder="Masukkan Nomor Brimen" required>
 
-  <script src="script-kaunit-inline.js"></script>
+      <button id="btnSubmit"><i class="fa-solid fa-paper-plane"></i> Kirim Data</button>
+    </section>
+
+    <!-- Tombol Monitoring -->
+    <section class="form-wrapper" style="margin-top: 30px;">
+      <h2><i class="fa-solid fa-chart-line"></i> Monitoring</h2>
+      <button class="btn blue" id="btnMonitoring">
+        <i class="fa-solid fa-eye"></i> Lihat Monitoring
+      </button>
+    </section>
+  </main>
+
+  <div id="toast"></div>
+
   <script>
-  // Inline small wrapper (non-module) to avoid CORS in file import; copy the functions needed from script.js here:
-  // For simplicity use direct call to webapp url:
-  const WEBAPP_URL = "https://script.google.com/macros/s/XXXXX/exec"; // <-- ganti
-  const MANTRI_OPTIONS = [
-    "156802 EKOWATI CAHYANINGROM",
-    "189290 MEGA BAGUS KURNIAWAN ABADI",
-    "189417 DEDDY NOVIYANTO B.S",
-    "213122 RISKA AGUSTIANA",
-    "270609 SULISTIYO RINI",
-    "288133 GALIH RIO PAMBUDI"
-  ];
-
-  // auth check
-  if (sessionStorage.getItem("role") !== "kaunit") {
-    window.location.href = "index.html";
-  }
-
-  // populate mantri dropdown
-  const sel = document.getElementById("namaMantri");
-  MANTRI_OPTIONS.forEach(o=>{
-    const opt = document.createElement("option");
-    opt.value = o; opt.textContent = o;
-    sel.appendChild(opt);
-  });
-
-  document.getElementById("btnLogout").addEventListener("click", ()=> {
-    sessionStorage.removeItem("role");
-    window.location.href = "index.html";
-  });
-
-  document.getElementById("btnSubmit").addEventListener("click", async ()=>{
-    const namaMantri = document.getElementById("namaMantri").value;
-    const nik = document.getElementById("nik").value.trim();
-    const namaNasabah = document.getElementById("namaNasabah").value.trim();
-    const nomorBrimen = document.getElementById("nomorBrimen").value.trim();
-    if (!nik || !namaNasabah || !nomorBrimen) return alert("Lengkapi semua field.");
-    const body = new URLSearchParams();
-    body.append("action","save_kaunit");
-    body.append("namaMantri", namaMantri);
-    body.append("nik", nik);
-    body.append("namaNasabah", namaNasabah);
-    body.append("nomorBrimen", nomorBrimen);
-    const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
-    const j = await res.json();
-    if (j.ok) {
-      alert("Data Kaunit tersimpan.");
-      // optional: clear
-      document.getElementById("nik").value = "";
-      document.getElementById("namaNasabah").value = "";
-      document.getElementById("nomorBrimen").value = "";
-    } else {
-      alert("Gagal: " + (j.error || JSON.stringify(j)));
+    // Cek role agar tidak sembarang akses
+    if (sessionStorage.getItem("role") !== "kaunit") {
+      window.location.href = "index.html";
     }
-  });
+
+    // Submit form
+    document.getElementById("btnSubmit").addEventListener("click", async () => {
+      const mantri = document.getElementById("mantri").value;
+      const nik = document.getElementById("nik").value.trim();
+      const nasabah = document.getElementById("nasabah").value.trim();
+      const nomorBrimen = document.getElementById("nomorBrimen").value.trim();
+
+      if (!mantri || !nik || !nasabah || !nomorBrimen) {
+        showToast("⚠️ Semua field wajib diisi!");
+        return;
+      }
+
+      try {
+        const res = await fetch("WEB_APP_URL_KAUNIT", {
+          method: "POST",
+          body: new URLSearchParams({
+            mantri, nik, nasabah, nomorBrimen
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === "sukses") {
+          showToast("✅ Data berhasil disimpan!");
+          document.getElementById("nik").value = "";
+          document.getElementById("nasabah").value = "";
+          document.getElementById("nomorBrimen").value = "";
+        } else {
+          showToast("❌ Gagal menyimpan data!");
+        }
+      } catch (err) {
+        showToast("❌ Terjadi kesalahan koneksi!");
+      }
+    });
+
+    // Monitoring button
+    document.getElementById("btnMonitoring").addEventListener("click", () => {
+      window.location.href = "monitoring.html";
+    });
+
+    // Toast function
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.className = "show";
+      setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
+    }
   </script>
 </body>
 </html>
