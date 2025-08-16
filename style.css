@@ -11,7 +11,7 @@ body {
     display: flex;
     align-items: center;
     padding: 15px 20px;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.25);
     backdrop-filter: blur(8px);
 }
 .logo {
@@ -74,6 +74,9 @@ body {
     padding: 8px 12px;
     font-size: 14px;
 }
+.btn.w-100 {
+    width: 100%;
+}
 
 /* ===== PASSWORD WRAPPER ===== */
 .pass-wrapper {
@@ -91,10 +94,72 @@ body {
     width: 60%;
 }
 
+/* ===== FORM KAUNIT ===== */
+.form-container {
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 15px;
+    text-align: left;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+.form-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+.form-container input,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* ===== POPUP SUKSES ===== */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    text-align: center;
+    z-index: 9999;
+}
+.popup.show {
+    display: block;
+    animation: fadeIn 0.4s ease-in-out;
+}
+.popup img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+.popup h5 {
+    margin: 0;
+    color: #28a745;
+    font-size: 16px;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -40%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
 /* ===== FOOTER ===== */
 .footer {
     text-align: center;
     padding: 15px;
     font-size: 12px;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.85);
 }
