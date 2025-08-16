@@ -17,16 +17,27 @@
       color: #333;
     }
     .form-title {
-      display: flex;
-      align-items: center;
       font-weight: bold;
       font-size: 1.2rem;
       margin-bottom: 20px;
+      text-align: center;
     }
-    .form-title img {
-      width: 40px;
-      margin-right: 10px;
+    .form-label {
+      font-weight: 600;
+      color: #333;
+      display: block;
+      margin-bottom: 6px;
+      text-align: left;
     }
+    .form-control, .form-select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    /* Popup sukses */
     .popup {
       display: none;
       position: fixed;
@@ -52,6 +63,22 @@
       width: 70px;
       margin-bottom: 15px;
     }
+    /* Progress bar */
+    .progress-container {
+      width: 100%;
+      background: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 14px;
+      margin-top: 15px;
+      display: none;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #007bff, #005ec4);
+      transition: width 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -62,42 +89,37 @@
 
   <main class="container">
     <div class="form-container">
-      <div class="form-title">
-        <img src="Brimo samping.png" alt="Logo"/> Input Activity Today
-      </div>
+      <div class="form-title">Input Activity Today</div>
 
       <form id="kaunitForm">
-        <div class="mb-3">
-          <label class="form-label">Nama Mantri</label>
-          <select class="form-select" name="namaMantri" required>
-            <option value="">-- Pilih --</option>
-            <option>156802 EKOWATI CAHYANINGROM</option>
-            <option>189290 MEGA BAGUS KURNIAWAN ABADI</option>
-            <option>189417 DEDDY NOVIYANTO B.S</option>
-            <option>213122 RISKA AGUSTIANA</option>
-            <option>270609 SULISTIYO RINI</option>
-            <option>288133 GALIH RIO PAMBUDI</option>
-          </select>
-        </div>
+        <label class="form-label">Nama Mantri</label>
+        <select class="form-select" name="namaMantri" required>
+          <option value="">-- Pilih --</option>
+          <option>156802 EKOWATI CAHYANINGROM</option>
+          <option>189290 MEGA BAGUS KURNIAWAN ABADI</option>
+          <option>189417 DEDDY NOVIYANTO B.S</option>
+          <option>213122 RISKA AGUSTIANA</option>
+          <option>270609 SULISTIYO RINI</option>
+          <option>288133 GALIH RIO PAMBUDI</option>
+        </select>
 
-        <div class="mb-3">
-          <label class="form-label">NIK Nasabah</label>
-          <input type="text" class="form-control" name="nikNasabah" required/>
-        </div>
+        <label class="form-label">NIK Nasabah</label>
+        <input type="text" class="form-control" name="nikNasabah" required/>
 
-        <div class="mb-3">
-          <label class="form-label">Nama Nasabah</label>
-          <input type="text" class="form-control" name="namaNasabah" required/>
-        </div>
+        <label class="form-label">Nama Nasabah</label>
+        <input type="text" class="form-control" name="namaNasabah" required/>
 
-        <div class="mb-3">
-          <label class="form-label">Nomor Brimen Berkas</label>
-          <input type="text" class="form-control" name="nomorBrimen" required/>
-        </div>
+        <label class="form-label">Nomor Brimen Berkas</label>
+        <input type="text" class="form-control" name="nomorBrimen" required/>
 
         <button type="submit" class="btn blue w-100">
           <i class="fa-solid fa-paper-plane"></i> Submit
         </button>
+
+        <!-- Progress bar -->
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
       </form>
     </div>
   </main>
@@ -118,7 +140,11 @@
       window.location.href = "./index.html";
     }
 
-    document.getElementById('kaunitForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('kaunitForm');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
 
       let formData = new FormData(this);
@@ -136,23 +162,43 @@
         return;
       }
 
+      // tampilkan progress bar
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+
+      let progress = 0;
+      let interval = setInterval(() => {
+        if (progress < 90) { // biar mentok 90% sebelum respon server
+          progress += 10;
+          progressBar.style.width = progress + '%';
+        }
+      }, 300);
+
       fetch("https://script.google.com/macros/s/AKfycbyjfNlA-S7hsPZqy6vWQcQRaU-8PTkS7seJFk7xiVNNHiBEjoKKkXHSOTR3lsSeYGfc/exec", {
         method: 'POST',
         body: formData
       })
-      .then(res => res.json().catch(() => ({}))) // ✅ jaga-jaga kalau bukan JSON
+      .then(res => res.json().catch(() => ({})))
       .then(data => {
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+        setTimeout(() => {
+          progressContainer.style.display = 'none';
+        }, 500);
+
         if (data.status === "sukses") {
           document.getElementById('successPopup').classList.add('show');
           setTimeout(() => {
             document.getElementById('successPopup').classList.remove('show');
           }, 2000);
-          this.reset();
+          form.reset();
         } else {
           alert('Gagal menyimpan data!');
         }
       })
       .catch(err => {
+        clearInterval(interval);
+        progressContainer.style.display = 'none';
         alert('Terjadi kesalahan koneksi!');
       });
     });
