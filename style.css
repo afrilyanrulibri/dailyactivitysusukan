@@ -21,6 +21,7 @@ body {
 .app-header h1 {
     font-size: 20px;
     font-weight: 700;
+    color: #fff;
 }
 
 /* ===== CONTAINER ===== */
@@ -99,8 +100,38 @@ body {
     background: linear-gradient(135deg, #007bff, #005ec4);
     color: #fff;
 }
+.btn.green {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: #fff;
+}
 .btn.w-100 {
     width: 100%;
+}
+.btn.small {
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+/* ===== INDEX PAGE ===== */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+.pass-wrapper {
+    display: none;
+    margin-top: 20px;
+    gap: 10px;
+    justify-content: center;
+}
+.pass-wrapper input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    outline: none;
 }
 
 /* ===== PROGRESS BAR ===== */
