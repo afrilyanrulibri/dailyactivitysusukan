@@ -58,9 +58,13 @@ body {
     gap: 8px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.btn:hover {
+.btn:hover:enabled {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 .btn.blue {
     background: linear-gradient(135deg, #007bff, #005ec4);
@@ -78,60 +82,54 @@ body {
     width: 100%;
 }
 
-/* ===== PASSWORD WRAPPER ===== */
-.pass-wrapper {
-    display: none;
-    margin-top: 20px;
-    gap: 8px;
-    justify-content: center;
-}
-.pass-wrapper input {
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    width: 60%;
-    background: #fff;
-    color: #000;
-}
-.pass-wrapper input::placeholder {
-    color: #555;
-}
-
 /* ===== FORM KAUNIT ===== */
 .form-container {
-    max-width: 450px;
-    margin: 20px auto;
+    max-width: 500px;
+    margin: 40px auto;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.15);
+    background: #fff;
     border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    color: #333;
     text-align: left;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
-.form-container label {
+.form-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.form-label {
+    font-weight: 600;
+    color: #333;
     display: block;
     margin-bottom: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
 }
-.form-container input,
-.form-container select {
+.form-control, .form-select {
     width: 100%;
     padding: 10px;
     border-radius: 8px;
-    border: none;
-    margin-bottom: 15px;
+    border: 1px solid #ccc;
     font-size: 14px;
-    outline: none;
+    margin-bottom: 15px;
     box-sizing: border-box;
-    background: #fff;
-    color: #000;
 }
-.form-container input::placeholder {
-    color: #555;
+
+/* ===== PROGRESS BAR ===== */
+.progress-container {
+    width: 100%;
+    background: #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 14px;
+    margin-top: 15px;
+    display: none;
+}
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #007bff, #005ec4);
+    transition: width 0.3s;
 }
 
 /* ===== POPUP SUKSES ===== */
@@ -141,7 +139,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #fff;
+    background: white;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.3);
@@ -150,16 +148,11 @@ body {
 }
 .popup.show {
     display: block;
-    animation: fadeIn 0.4s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out;
 }
 .popup img {
-    width: 60px;
-    margin-bottom: 10px;
-}
-.popup h5 {
-    margin: 0;
-    color: #28a745;
-    font-size: 16px;
+    width: 70px;
+    margin-bottom: 15px;
 }
 @keyframes fadeIn {
     from { opacity: 0; transform: translate(-50%, -40%); }
