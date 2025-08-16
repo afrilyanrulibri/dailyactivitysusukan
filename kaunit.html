@@ -8,23 +8,26 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
+  <!-- HEADER -->
   <header class="app-header">
     <img src="Brimo samping.png" alt="BRIMO Logo" class="logo"/>
-    <h1>Daily Activity Susukan</h1>
+    <h1>Kaunit</h1>
     <button class="menu-toggle" id="menuToggle">
       <i class="fa-solid fa-bars"></i>
     </button>
   </header>
 
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <ul>
-      <li><a href="kaunit.html"><i class="fa-solid fa-pen"></i> Input Activity</a></li>
+      <li><a href="kaunit.html"><i class="fa-solid fa-pen-to-square"></i> Input Activity</a></li>
       <li><a href="monitoring.html"><i class="fa-solid fa-chart-line"></i> Monitoring</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </nav>
   <div class="overlay" id="overlay"></div>
 
+  <!-- CONTENT -->
   <main class="container">
     <div class="form-container">
       <div class="form-title">Input Activity Today</div>
@@ -47,7 +50,7 @@
 
         <label class="form-label">Nama Nasabah</label>
         <input type="text" class="form-control" name="namaNasabah" required
-               pattern="^[A-Za-z\s]+$" title="Nama hanya boleh huruf dan spasi"/>
+               pattern="^[A-Za-z\\s]+$" title="Nama hanya boleh huruf dan spasi"/>
 
         <label class="form-label">Nomor Brimen Berkas</label>
         <input type="text" class="form-control" name="nomorBrimen" required
@@ -65,6 +68,7 @@
     </div>
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
     <p>&copy; 2025 BRI Unit Susukan</p>
   </footer>
@@ -75,6 +79,7 @@
     <h5>Data Sudah Diinput</h5>
   </div>
 
+  <!-- SCRIPT -->
   <script>
     // proteksi agar tidak bisa akses langsung
     if (sessionStorage.getItem("role") !== "kaunit") {
@@ -94,9 +99,11 @@
         return;
       }
 
+      // disable tombol + kasih spinner
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
 
+      // tampilkan progress bar
       progressContainer.style.display = 'block';
       progressBar.style.width = '0%';
 
@@ -141,19 +148,24 @@
       });
     });
 
-    // === Sidebar Menu ===
-    const menuToggle = document.getElementById("menuToggle");
+    // === Sidebar ===
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
+    const toggle = document.getElementById("menuToggle");
 
-    menuToggle.addEventListener("click", () => {
+    toggle.addEventListener("click", () => {
       sidebar.classList.toggle("active");
       overlay.classList.toggle("active");
     });
-
     overlay.addEventListener("click", () => {
       sidebar.classList.remove("active");
       overlay.classList.remove("active");
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.clear();
+      window.location.href = "index.html";
     });
   </script>
 </body>
