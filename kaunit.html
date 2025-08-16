@@ -11,7 +11,19 @@
   <header class="app-header">
     <img src="Brimo samping.png" alt="BRIMO Logo" class="logo"/>
     <h1>Daily Activity Susukan</h1>
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
   </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="kaunit.html"><i class="fa-solid fa-pen"></i> Input Activity</a></li>
+      <li><a href="monitoring.html"><i class="fa-solid fa-chart-line"></i> Monitoring</a></li>
+    </ul>
+  </nav>
+  <div class="overlay" id="overlay"></div>
 
   <main class="container">
     <div class="form-container">
@@ -82,11 +94,9 @@
         return;
       }
 
-      // disable tombol + kasih spinner
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
 
-      // tampilkan progress bar
       progressContainer.style.display = 'block';
       progressBar.style.width = '0%';
 
@@ -129,6 +139,21 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit';
       });
+    });
+
+    // === Sidebar Menu ===
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      overlay.classList.toggle("active");
+    });
+
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("active");
+      overlay.classList.remove("active");
     });
   </script>
 </body>
