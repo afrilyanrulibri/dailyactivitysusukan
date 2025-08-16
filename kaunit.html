@@ -6,80 +6,6 @@
   <title>Daily Activity Susukan - Kaunit</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <style>
-    .form-container {
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      color: #333;
-    }
-    .form-title {
-      font-weight: bold;
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .form-label {
-      font-weight: 600;
-      color: #333;
-      display: block;
-      margin-bottom: 6px;
-      text-align: left;
-    }
-    .form-control, .form-select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-    /* Popup sukses */
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      text-align: center;
-      z-index: 9999;
-    }
-    .popup.show {
-      display: block;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -40%); }
-      to { opacity: 1; transform: translate(-50%, -50%); }
-    }
-    .popup img {
-      width: 70px;
-      margin-bottom: 15px;
-    }
-    /* Progress bar */
-    .progress-container {
-      width: 100%;
-      background: #eee;
-      border-radius: 8px;
-      overflow: hidden;
-      height: 14px;
-      margin-top: 15px;
-      display: none;
-    }
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #007bff, #005ec4);
-      transition: width 0.3s;
-    }
-  </style>
 </head>
 <body>
   <header class="app-header">
@@ -104,15 +30,18 @@
         </select>
 
         <label class="form-label">NIK Nasabah</label>
-        <input type="text" class="form-control" name="nikNasabah" required/>
+        <input type="text" class="form-control" name="nikNasabah" maxlength="16" required
+               pattern="^[0-9]{16}$" title="NIK harus 16 digit angka"/>
 
         <label class="form-label">Nama Nasabah</label>
-        <input type="text" class="form-control" name="namaNasabah" required/>
+        <input type="text" class="form-control" name="namaNasabah" required
+               pattern="^[A-Za-z\\s]+$" title="Nama hanya boleh huruf dan spasi"/>
 
         <label class="form-label">Nomor Brimen Berkas</label>
-        <input type="text" class="form-control" name="nomorBrimen" required/>
+        <input type="text" class="form-control" name="nomorBrimen" required
+               pattern="^[0-9]+$" title="Nomor Brimen harus angka"/>
 
-        <button type="submit" class="btn blue w-100">
+        <button type="submit" class="btn blue w-100" id="submitBtn">
           <i class="fa-solid fa-paper-plane"></i> Submit
         </button>
 
@@ -143,24 +72,19 @@
     const form = document.getElementById('kaunitForm');
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
+    const submitBtn = document.getElementById('submitBtn');
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
 
-      let formData = new FormData(this);
-      let allFilled = true;
-
-      for (let value of formData.values()) {
-        if (!value.trim()) {
-          allFilled = false;
-          break;
-        }
-      }
-
-      if (!allFilled) {
-        alert('Harap isi semua field!');
+      if (!form.checkValidity()) {
+        form.reportValidity();
         return;
       }
+
+      // disable tombol + kasih spinner
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
 
       // tampilkan progress bar
       progressContainer.style.display = 'block';
@@ -168,7 +92,7 @@
 
       let progress = 0;
       let interval = setInterval(() => {
-        if (progress < 90) { // biar mentok 90% sebelum respon server
+        if (progress < 90) {
           progress += 10;
           progressBar.style.width = progress + '%';
         }
@@ -176,7 +100,7 @@
 
       fetch("https://script.google.com/macros/s/AKfycbyjfNlA-S7hsPZqy6vWQcQRaU-8PTkS7seJFk7xiVNNHiBEjoKKkXHSOTR3lsSeYGfc/exec", {
         method: 'POST',
-        body: formData
+        body: new FormData(form)
       })
       .then(res => res.json().catch(() => ({})))
       .then(data => {
@@ -196,10 +120,14 @@
           alert('Gagal menyimpan data!');
         }
       })
-      .catch(err => {
+      .catch(() => {
         clearInterval(interval);
         progressContainer.style.display = 'none';
         alert('Terjadi kesalahan koneksi!');
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit';
       });
     });
   </script>
