@@ -1,134 +1,61 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="utf-8">
-  <title>Monitoring</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body{font-family:sans-serif;padding:18px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border:1px solid #ddd;padding:6px;text-align:left}
-    .btn{padding:6px 10px;cursor:pointer;border-radius:4px}
-    .done{background:green;color:white}
-    .notdone{background:red;color:white}
-  </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitoring - Daily Activity Susukan</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
-  <h2>Monitoring (Kaunit / Supervisor)</h2>
-  <button id="btnLogout">Logout</button>
-  <label>Pilih Activity</label>
-  <select id="activity">
-    <option value="">-- Pilih --</option>
-    <option>OTS Pinjaman</option>
-    <option>PUS</option>
-    <option>QRIS</option>
-    <option>SIMPANAN</option>
-  </select>
+  <header class="app-header">
+    <img src="Brimo samping.png" alt="BRIMO Logo" class="logo"/>
+    <h1>Monitoring</h1>
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </header>
 
-  <div id="tableWrap"></div>
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="kaunit.html"><i class="fa-solid fa-pen"></i> Input Activity</a></li>
+      <li><a href="monitoring.html"><i class="fa-solid fa-chart-line"></i> Monitoring</a></li>
+    </ul>
+  </nav>
+  <div class="overlay" id="overlay"></div>
+
+  <main class="container">
+    <div class="form-container">
+      <div class="form-title">📊 Halaman Monitoring</div>
+      <p style="text-align:center; color:#fff;">Masih dalam pengembangan...</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 BRI Unit Susukan</p>
+  </footer>
 
   <script>
-  const WEBAPP_URL = "https://script.google.com/macros/s/XXXXX/exec"; // <-- ganti
-
-  if (sessionStorage.getItem("role") !== "kaunit") {
-    window.location.href = "index.html";
-  }
-
-  document.getElementById("btnLogout").addEventListener("click", ()=> {
-    sessionStorage.removeItem("role");
-    window.location.href = "index.html";
-  });
-
-  document.getElementById("activity").addEventListener("change", async ()=>{
-    const val = document.getElementById("activity").value;
-    const wrap = document.getElementById("tableWrap");
-    wrap.innerHTML = "Loading...";
-    if (val === "OTS Pinjaman") {
-      // call monitor_ots
-      const res = await fetch(`${WEBAPP_URL}?action=monitor_ots`);
-      const arr = await res.json();
-      if (!Array.isArray(arr)) { wrap.innerHTML = "No data"; return; }
-      let html = `<table><thead><tr>
-        <th>NAMA MANTRI</th><th>NIK NASABAH</th><th>NAMA NASABAH</th><th>NOMOR BRIMEN</th>
-        <th>LOCATION</th><th>KETERANGAN</th><th>ACTION</th></tr></thead><tbody>`;
-      arr.forEach(item=>{
-        const lat = item.latitude || "";
-        const lon = item.longitude || "";
-        const locationBtn = lat && lon ? `<button class="btn locBtn" data-lat="${lat}" data-lon="${lon}">Location</button>` : "";
-        const doneClass = item.done ? "done" : "notdone";
-        const doneLabel = item.done ? "DONE" : "NOT DONE";
-        html += `<tr data-row="${item.mantriRow}">
-          <td>${item.mantriName||""}</td>
-          <td>${item.nik||""}</td>
-          <td>${item.namaNasabah||""}</td>
-          <td>${item.nomorBrimen||""}</td>
-          <td>${locationBtn}</td>
-          <td>${item.keterangan||""}</td>
-          <td><button class="btn doneBtn ${doneClass}" data-row="${item.mantriRow}">${doneLabel}</button></td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-      wrap.innerHTML = html;
-    } else if (val === "PUS" || val === "QRIS" || val === "SIMPANAN") {
-      // list mantri then filter by activity
-      const res = await fetch(`${WEBAPP_URL}?action=list_mantri`);
-      const arr = await res.json();
-      const filt = arr.filter(r => (r.activity||"").toLowerCase() === val.toLowerCase());
-      if (!filt.length) { wrap.innerHTML = "No data"; return; }
-      let html = `<table><thead><tr>
-        <th>NAMA MANTRI</th><th>NAMA NASABAH / MERCHANT</th><th>FOTO</th><th>LOCATION</th><th>ACTION</th></tr></thead><tbody>`;
-      filt.forEach(item=>{
-        const foto = item.fotoUrl ? `<a href="${item.fotoUrl}" target="_blank">Lihat Foto</a>` : "";
-        const lat = item.latitude || "";
-        const lon = item.longitude || "";
-        const locationBtn = lat && lon ? `<button class="btn locBtn" data-lat="${lat}" data-lon="${lon}">Location</button>` : "";
-        const doneClass = item.done ? "done" : "notdone";
-        const doneLabel = item.done ? "DONE" : "NOT DONE";
-        html += `<tr data-row="${item.row}">
-          <td>${item.namaMantri||""}</td>
-          <td>${item.namaNasabah||""}</td>
-          <td>${foto}</td>
-          <td>${locationBtn}</td>
-          <td><button class="btn doneBtn ${doneClass}" data-row="${item.row}">${doneLabel}</button></td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-      wrap.innerHTML = html;
-    } else {
-      wrap.innerHTML = "";
+    // proteksi agar hanya kaunit yg bisa masuk
+    if (sessionStorage.getItem("role") !== "kaunit") {
+      window.location.href = "./index.html";
     }
 
-    // attach handlers
-    document.querySelectorAll(".locBtn").forEach(b=>{
-      b.addEventListener("click", ()=> {
-        const lat = b.dataset.lat, lon = b.dataset.lon;
-        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`, "_blank");
-      });
+    // === Sidebar Menu ===
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      overlay.classList.toggle("active");
     });
 
-    document.querySelectorAll(".doneBtn").forEach(b=>{
-      b.addEventListener("click", async ()=>{
-        const row = b.dataset.row;
-        // toggle
-        const isDone = b.classList.contains("done");
-        const newVal = !isDone;
-        const body = new URLSearchParams();
-        body.append("action","mark_done");
-        body.append("row", row);
-        body.append("value", newVal ? "TRUE" : "FALSE");
-        const res = await fetch(WEBAPP_URL, { method: "POST", body: body });
-        const j = await res.json();
-        if (j.ok) {
-          b.classList.toggle("done");
-          b.classList.toggle("notdone");
-          b.textContent = newVal ? "DONE" : "NOT DONE";
-        } else {
-          alert("Gagal update: " + JSON.stringify(j));
-        }
-      });
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("active");
+      overlay.classList.remove("active");
     });
-
-  });
   </script>
 </body>
 </html>
