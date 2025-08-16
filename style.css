@@ -34,17 +34,50 @@ body {
     backdrop-filter: blur(6px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-.container h2 {
-    font-size: 18px;
+
+/* ===== FORM ===== */
+.form-container {
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    text-align: left;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+.form-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
     margin-bottom: 20px;
+    color: #fff;
+}
+.form-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+.form-container input,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    background: #fff;
+    color: #000;
+}
+.form-container input::placeholder {
+    color: #555;
 }
 
 /* ===== BUTTONS ===== */
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
 .btn {
     padding: 12px 16px;
     border: none;
@@ -58,78 +91,32 @@ body {
     gap: 8px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.btn:hover:enabled {
+.btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 .btn.blue {
     background: linear-gradient(135deg, #007bff, #005ec4);
     color: #fff;
 }
-.btn.green {
-    background: linear-gradient(135deg, #28a745, #1f7a34);
-    color: #fff;
-}
-.btn.small {
-    padding: 8px 12px;
-    font-size: 14px;
-}
 .btn.w-100 {
     width: 100%;
 }
 
-/* ===== FORM KAUNIT ===== */
-.form-container {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    color: #333;
-    text-align: left;
-}
-.form-title {
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    text-align: center;
-}
-.form-label {
-    font-weight: 600;
-    color: #333;
-    display: block;
-    margin-bottom: 6px;
-}
-.form-control, .form-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
-}
-
 /* ===== PROGRESS BAR ===== */
 .progress-container {
-    width: 100%;
-    background: #eee;
-    border-radius: 8px;
-    overflow: hidden;
-    height: 14px;
-    margin-top: 15px;
     display: none;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    margin-top: 15px;
 }
 .progress-bar {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #007bff, #005ec4);
-    transition: width 0.3s;
+    width: 0;
+    height: 8px;
+    background: #28a745;
+    border-radius: 8px;
+    transition: width 0.3s ease;
 }
 
 /* ===== POPUP SUKSES ===== */
@@ -139,20 +126,25 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background: #fff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     text-align: center;
     z-index: 9999;
 }
 .popup.show {
     display: block;
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.4s ease-in-out;
 }
 .popup img {
-    width: 70px;
-    margin-bottom: 15px;
+    width: 60px;
+    margin-bottom: 10px;
+}
+.popup h5 {
+    margin: 0;
+    color: #28a745;
+    font-size: 16px;
 }
 @keyframes fadeIn {
     from { opacity: 0; transform: translate(-50%, -40%); }
