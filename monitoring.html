@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monitoring - Daily Activity Susukan</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
+  <!-- HEADER -->
   <header class="app-header">
     <img src="Brimo samping.png" alt="BRIMO Logo" class="logo"/>
     <h1>Monitoring</h1>
@@ -16,45 +17,46 @@
     </button>
   </header>
 
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <ul>
-      <li><a href="kaunit.html"><i class="fa-solid fa-pen"></i> Input Activity</a></li>
+      <li><a href="kaunit.html"><i class="fa-solid fa-pen-to-square"></i> Input Activity</a></li>
       <li><a href="monitoring.html"><i class="fa-solid fa-chart-line"></i> Monitoring</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </nav>
   <div class="overlay" id="overlay"></div>
 
+  <!-- CONTENT -->
   <main class="container">
-    <div class="form-container">
-      <div class="form-title">📊 Halaman Monitoring</div>
-      <p style="text-align:center; color:#fff;">Masih dalam pengembangan...</p>
-    </div>
+    <h2><i class="fa-solid fa-chart-line"></i> Monitoring Aktivitas</h2>
+    <p>📊 Halaman monitoring masih kosong. Nanti akan diisi data aktivitas dari Kaunit / Mantri.</p>
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
     <p>&copy; 2025 BRI Unit Susukan</p>
   </footer>
 
+  <!-- SCRIPT -->
   <script>
-    // proteksi agar hanya kaunit yg bisa masuk
-    if (sessionStorage.getItem("role") !== "kaunit") {
-      window.location.href = "./index.html";
-    }
-
-    // === Sidebar Menu ===
-    const menuToggle = document.getElementById("menuToggle");
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
+    const toggle = document.getElementById("menuToggle");
 
-    menuToggle.addEventListener("click", () => {
+    toggle.addEventListener("click", () => {
       sidebar.classList.toggle("active");
       overlay.classList.toggle("active");
     });
-
     overlay.addEventListener("click", () => {
       sidebar.classList.remove("active");
       overlay.classList.remove("active");
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.clear();
+      window.location.href = "index.html";
     });
   </script>
 </body>
